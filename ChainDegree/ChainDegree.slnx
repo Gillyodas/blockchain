@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ChainDegree.API/ChainDegree.API.csproj" />
+  <Project Path="ChainDegree.Application/ChainDegree.Application.csproj" />
+  <Project Path="ChainDegree.Domain/ChainDegree.Domain.csproj" />
+  <Project Path="ChainDegree.Infrastructure/ChainDegree.Infrastructure.csproj" />
+  <Project Path="ChainDegree.SharedKernel/ChainDegree.SharedKernel.csproj" />
+</Solution>

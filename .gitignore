@@ -1,0 +1,31 @@
+## [DO NET] - Các file build và rác của Visual Studio
+[Bb]in/
+[Oo]bj/
+.vs/
+.user/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## [DOCKER] - Chặn các file dữ liệu do Docker sinh ra
+data/
+*/data/
+
+## [LOGS] - Chặn các file log
+Logs/
+*.log
+
+## [BLOCKCHAIN] - Chặn các file key và cấu hình riêng của Node
+*key
+*password
+.env
+.env.*
+
+## [APP SETTINGS] - Chặn các file chứa connection string thật
+ChainDegree/ChainDegree.API/appsettings.Development.json
+ChainDegree/ChainDegree.API/appsettings.Local.json
+ChainDegree/ChainDegree.API/appsettings.json
+
+## [CLAUDE] - Local settings
+.claude/

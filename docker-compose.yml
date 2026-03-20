@@ -1,0 +1,23 @@
+services:
+    besu-node:
+      image: hyperledger/besu:latest
+      container_name: chaindegree-besu
+      ports:
+        - "8545:8545"   # HTTP JSON-RPC (app .NET gọi vào đây)
+        - "8546:8546"   # WebSocket
+      volumes:
+        - ./besu/config/genesis.json:/config/genesis.json
+        - besu-data:/opt/besu/data
+      command:
+        - --genesis-file=/config/genesis.json
+        - --rpc-http-enabled
+        - --rpc-http-api=ETH,NET,IBFT,WEB3,ADMIN,TXPOOL
+        - --rpc-http-host=0.0.0.0
+        - --rpc-http-cors-origins=*
+        - --rpc-ws-enabled
+        - --rpc-ws-host=0.0.0.0
+        - --host-allowlist=*
+        - --min-gas-price=0
+
+volumes:
+  besu-data:
