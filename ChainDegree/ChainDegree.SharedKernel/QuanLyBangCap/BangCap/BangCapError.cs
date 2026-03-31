@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ControlHub.SharedKernel.Common.Errors;
 
-namespace ChainDegree.SharedKernel.CoSoDaoTao.BangCap;
+namespace ChainDegree.SharedKernel.QuanLyBangCap.BangCap;
 
 public class BangCapError
 {

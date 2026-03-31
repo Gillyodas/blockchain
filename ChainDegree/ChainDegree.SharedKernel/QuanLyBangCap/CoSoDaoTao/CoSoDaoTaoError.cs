@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ControlHub.SharedKernel.Common.Errors;
 
-namespace ChainDegree.SharedKernel.CoSoDaoTao.CoSoDaoTao
+namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
 {
     public class CoSoDaoTaoError
     {
