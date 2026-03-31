@@ -7,7 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ControlHub.Core" Version="1.3.17" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\auditai_sessions.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260303.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260304.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260305.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260308.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260309.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260310.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260311.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260313.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260314.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260315.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260316.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260317.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260318.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\Logs\log-20260319.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks_batch2.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\sample_runbooks.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ControlHub.Core" Version="1.3.20" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.13.11" />
   </ItemGroup>

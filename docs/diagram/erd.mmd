@@ -1,0 +1,206 @@
+---
+config:
+  layout: elk
+---
+erDiagram
+    direction TB
+
+    CoSoDaoTao {
+        guid        Id                                      PK
+        string      Ten
+        string      DiaChiViCSDT
+        guid        TaiKhoanId
+        guid        YeuCauDangKyId                         FK  "truy vết nguồn gốc"
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa                                "soft delete"
+        int         UyTin_Diem
+        int         UyTin_SoLuongBangCapPhatHanh
+        int         UyTin_SoLuongBangCapThuHoi
+        int         UyTin_SoLuongBangCapBiBaoCaoGianLan
+        int         UyTin_SoLuongXacMinhHopLe
+        int         UyTin_HangUyTin                            "enum HangUyTin"
+    }
+
+    NhaTuyenDung {
+        guid        Id                                      PK
+        string      Ten
+        string      DiaChi
+        string      DiaChiViNhaTuyenDung
+        guid        TaiKhoanId
+        guid        YeuCauDangKyId                         FK  "truy vết nguồn gốc"
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa                                "soft delete"
+        int         UyTin_Diem
+        int         UyTin_SoLuongBangCapBiBaoCaoGianLan
+        int         UyTin_SoLuongXacMinhHopLe
+        int         UyTin_HangUyTin                            "enum HangUyTin"
+    }
+
+    SinhVien {
+        guid        Id                                      PK
+        string      Ten
+        string      CCCD                                       "unique — nhận diện xuyên CSDT"
+        string      Email
+        string      DiaChiViSinhVien
+        guid        TaiKhoanId
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa                                "soft delete khi không còn CSDT nào quản lý"
+    }
+
+    BangCap {
+        guid        Id                                      PK
+        string      Ten
+        string      File                                       "URL file PDF"
+        string      Link                                       "link chia sẻ công khai"
+        double      Diem
+        datetime    NgayCap
+        datetime    NgayHetHan                                 "nullable"
+        string      MaBamXacThuc                               "credentialHash = keccak256(data + salt)"
+        string      MaBamGiaoDich                              "txHash sau khi mine"
+        string      Salt
+        string      GhiChuHuy                                  "nullable"
+        string      GhiChuThuHoi                               "nullable"
+        int         LoaiBangCap                                "enum LoaiBangCap"
+        int         LyDoHuy                                    "enum LyDoHuy — nullable"
+        int         LyDoThuHoi                                 "enum LyDoThuHoi — nullable"
+        int         TrangThaiBangCap                           "enum TrangThaiBangCap"
+        int         TrangThaiBlockchain                        "enum TrangThaiBlockchain"
+        guid        CoSoDaoTaoId                           FK
+        guid        SinhVienId                             FK
+        guid        LinhVucId                              FK
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa                                "soft delete — không xóa cứng"
+    }
+
+    LinhVuc {
+        guid        Id                                      PK
+        string      Ten
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa
+    }
+
+    YeuCauDangKy {
+        guid        Id                                      PK
+        string      TenToChuc
+        string      Email
+        string      SDT
+        string      DiaChi
+        int         LoaiToChucDangKy                           "enum: CoSoDaoTao | NhaTuyenDung"
+        int         TrangThaiYeuCauDangKy                      "enum TrangThaiYeuCauDangKy"
+        int         LyDoTuChoi                                 "enum LyDoTuChoi — nullable"
+        string      GhiChuTuChoi                               "nullable — bắt buộc khi TuChoi"
+        guid        DuyetBoiAdminId                            "nullable — FK → Admin (ControlHub)"
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+    }
+
+    GiayPhep {
+        guid        Id                                      PK
+        string      DuongDanLuuTru
+        int         KieuGiayPhep                               "enum KieuGiayPhepCSDT | KieuGiayPhepNTD"
+        int         TrangThaiXacMinh                           "enum TrangThaiXacMinhGiayPhep"
+        datetime    ThoiGianTaiLen
+        datetime    ThoiGianDuocXacMinh                        "nullable"
+        guid        XacMinhBoiAdminId                          "nullable — FK → Admin (ControlHub)"
+        bool        ChuKy_CoChuKySo
+        bool        ChuKy_HopLe
+        string      ChuKy_NhaCungCap                          "nullable"
+        bool        ChuKy_NhaCungCapDuocTinTuong
+        datetime    ChuKy_NgayHetHan                           "nullable"
+        datetime    ChuKy_XacMinhLuc                           "nullable"
+        guid        YeuCauDangKyId                         FK  "nullable — trong giai đoạn đăng ký"
+        guid        CoSoDaoTaoId                           FK  "nullable — sau khi duyệt CSDT"
+        guid        NhaTuyenDungId                         FK  "nullable — sau khi duyệt NTD"
+    }
+
+    CSDTSinhVien {
+        guid        CoSoDaoTaoId                           PK,FK
+        guid        SinhVienId                             PK,FK
+        datetime    ThoiGianLienKet
+        datetime    ThoiGianHuyLienKet                        "nullable"
+    }
+
+    NhatKyXacMinh {
+        guid        Id                                      PK
+        datetime    ThoiGianXacMinh
+        string      MaBamXacMinh                               "credentialHash được xác minh"
+        int         KetQuaXacMinh                              "enum KetQuaXacMinhEnum"
+        guid        NhaTuyenDungId                         FK  "nullable — null nếu xác minh công khai"
+        guid        BangCapId                              FK
+    }
+
+    BaoCaoGianLan {
+        guid        Id                                      PK
+        string      LyDo
+        string      GhiChu
+        int         TrangThaiBaoCao                            "enum TrangThaiBaoCao"
+        datetime    ThoiGianBaoCao
+        datetime    ThoiGianCapNhat
+        guid        BangCapId                              FK
+        guid        BaoCaoBoiSinhVienId                    FK  "nullable"
+        guid        BaoCaoBoiNhaTuyenDungId                FK  "nullable"
+        guid        XuLyBoiAdminId                             "nullable — FK → Admin (ControlHub)"
+    }
+
+    ThongTinTuyenDung {
+        guid        Id                                      PK
+        string      Ten
+        string      MoTa
+        datetime    ThoiHanUngTuyen
+        guid        NhaTuyenDungId                         FK
+        guid        LinhVucId                              FK
+        datetime    ThoiGianTao
+        datetime    ThoiGianCapNhat
+        datetime    ThoiGianXoa
+    }
+
+    KetQuaPhanTich {
+        guid        Id                                      PK
+        double      PhanTramPhuHop
+        json        KetLuan                                    "điểm mạnh, điểm thiếu, đề xuất"
+        datetime    ThoiGianPhanTich
+        guid        ThongTinTuyenDungId                    FK
+        guid        HoSoUngTuyenId                         FK
+    }
+
+    HoSoUngTuyen {
+        guid        Id                                      PK
+        int         TrangThaiUngTuyen                          "enum TrangThaiUngTuyen"
+        datetime    ThoiGianUngTuyen
+        datetime    ThoiGianCapNhat
+        guid        SinhVienId                             FK
+        guid        ThongTinTuyenDungId                    FK
+    }
+
+    BangCapUngTuyen {
+        guid        HoSoUngTuyenId                         PK,FK
+        guid        BangCapId                              PK,FK
+    }
+    YeuCauDangKy    ||--o{    GiayPhep            : "đính kèm (giai đoạn đăng ký)"
+    CoSoDaoTao      ||--o{    GiayPhep            : "sở hữu (sau khi duyệt)"
+    NhaTuyenDung    ||--o{    GiayPhep            : "sở hữu (sau khi duyệt)"
+    YeuCauDangKy    ||--o|    CoSoDaoTao          : "tạo ra"
+    YeuCauDangKy    ||--o|    NhaTuyenDung        : "tạo ra"
+    CoSoDaoTao      ||--o{    CSDTSinhVien        : ""
+    SinhVien        ||--o{    CSDTSinhVien        : ""
+    CoSoDaoTao      ||--o{    BangCap             : "cấp"
+    SinhVien        ||--o{    BangCap             : "được cấp"
+    LinhVuc         ||--o{    BangCap             : "phân loại"
+    LinhVuc         ||--o{    ThongTinTuyenDung   : "phân loại"
+    NhaTuyenDung    ||--o{    NhatKyXacMinh       : "thực hiện"
+    BangCap         ||--o{    NhatKyXacMinh       : "được xác minh"
+    BangCap         ||--o{    BaoCaoGianLan       : "bị báo cáo"
+    SinhVien        ||--o{    BaoCaoGianLan       : "báo cáo (SV)"
+    NhaTuyenDung    ||--o{    BaoCaoGianLan       : "báo cáo (NTD)"
+    NhaTuyenDung    ||--o{    ThongTinTuyenDung   : "đăng"
+    ThongTinTuyenDung ||--o{  KetQuaPhanTich      : "có nhiều lần phân tích"
+    HoSoUngTuyen    ||--o{    KetQuaPhanTich      : "được phân tích"
+    SinhVien        ||--o{    HoSoUngTuyen        : "nộp"
+    ThongTinTuyenDung ||--o{  HoSoUngTuyen        : "nhận"
+    HoSoUngTuyen    ||--|{    BangCapUngTuyen     : "gồm"
+    BangCap         ||--o{    BangCapUngTuyen     : "được đính kèm"

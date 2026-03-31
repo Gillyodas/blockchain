@@ -1,0 +1,428 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+    direction TB
+
+    %% ============================================================
+    %% AGGREGATE ROOTS / ENTITIES
+    %% ============================================================
+
+    class CoSoDaoTao {
+        +Id
+        +Ten
+        +DiaChiViCSDT
+        +TaiKhoanId
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+        +TaoSinhVien(cccd, email...) Result
+        +HuyLienKetSinhVien()
+        +CapNhatThongTinSinhVien()
+        +CapNhatThongTinCSDT()
+        +TaoBangCapChoSinhVien() Result
+        +CapNhatBangCapChoSinhVien() Result
+        +HuyBangCapCuaSinhVien(lyDoHuy LyDoHuy, ghiChu string)
+        +ThuHoiBangCapCuaSinhVien(lyDoThuHoi LyDoThuHoi, ghiChu string)
+        +KhoiPhucBangCapCuaSinhVien()
+        +ThemGiayPhep()
+        +CapNhatGiayPhep()
+        +XoaGiayPhep()
+    }
+
+    class NhaTuyenDung {
+        +Id
+        +Ten
+        +DiaChi
+        +DiaChiViNhaTuyenDung
+        +TaiKhoanId
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+        +CapNhatThongTinNhaTuyenDung()
+        +TaoTTTD()
+        +CapNhatTTTD()
+        +XoaTTTD()
+        +ThemGiayPhep()
+        +CapNhatGiayPhep()
+        +XoaGiayPhep()
+        +DuyetHoSoUngTuyen()
+        +BaoCaoGianLanBangCap()
+    }
+
+    class SinhVien {
+        +Id
+        +Ten
+        +CCCD
+        +Email
+        +DiaChiViSinhVien
+        +IdTaiKhoan
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+        +UngTuyen()
+        +ThemBangCapUngTuyen()
+        +XoaBangCapUngTuyen()
+        +ThuHoiHoSoUngTuyen()
+        +ChiaSeDuongDan()
+        +TaoMaQR()
+        +BaoCaoGianLanBangCap()
+    }
+
+    class BangCap {
+        +Id : guid
+        +Ten : string
+        +File : string
+        +Diem : double
+        +Link : string
+        +NgayCap : datetime
+        +NgayHetHan : datetime
+        +MaBamXacThuc : string
+        +MaBamGiaoDich : string
+        +Salt : string
+        +GhiChuHuy : string
+        +GhiChuThuHoi : string
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+        +DanhDauDaHuy(lyDoHuy LyDoHuy, ghiChu string)
+        +DanhDauThuHoi(lyDoThuHoi LyDoThuHoi, ghiChu string)
+        +KhoiPhuc()
+        +CapNhatTrangThaiBlockchain(maBamGiaoDich string)
+    }
+
+    class LinhVuc {
+        +Id
+        +TenLinhVuc
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+        +TaoLinhVuc()
+        +CapNhatLinhVuc()
+        +XoaLinhVuc()
+    }
+
+    class ThongTinTuyenDung {
+        +Id
+        +Ten
+        +MoTa
+        +ThoiHanUngTuyen
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +ThoiGianXoa : datetime
+    }
+
+    class KetQuaPhanTich {
+        +Id
+        +PhanTramPhuHop
+        +KetLuan : Json
+        +ThoiGianPhanTich : datetime
+    }
+
+    class NhatKyXacMinh {
+        +Id
+        +ThoiGianXacMinh : datetime
+        +MaBamXacMinh
+    }
+
+    class HoSoUngTuyen {
+        +Id
+        +ThoiGianUngTuyen : datetime
+        +ThoiGianCapNhat : datetime
+        +CapNhatTrangThai(trangThai TrangThaiUngTuyen)
+    }
+
+    class BangCapUngTuyen {
+    }
+
+    class YeuCauDangKy {
+        +Id
+        +TenToChuc
+        +Email
+        +SDT
+        +DiaChi
+        +DuyetBoiAdminId
+        +LyDoTuChoi : int
+        +ThoiGianTao : datetime
+        +ThoiGianCapNhat : datetime
+        +DangKyTaiKhoanCoSoDaoTao() Result
+        +DangKyTaiKhoanNhaTuyenDung()
+        +HuyYeuCauDangKy()
+    }
+
+    class BaoCaoGianLan {
+        +Id
+        +LyDo : string
+        +GhiChu : string
+        +ThoiGianBaoCao : datetime
+        +ThoiGianCapNhat : datetime
+        +CapNhatTrangThai(trangThai TrangThaiBaoCao)
+    }
+
+    %% ============================================================
+    %% VALUE OBJECTS
+    %% ============================================================
+
+    class GiayPhepCSDT {
+        <<ValueObject>>
+        +DuongDanLuuTru
+        +ThoiGianTaiLen : datetime
+        +ThoiGianDuocXacMinh : datetime
+        +XacMinhBoiAdmin
+    }
+
+    class GiayPhepNhaTuyenDung {
+        <<ValueObject>>
+        +DuongDanLuuTru
+        +ThoiGianTaiLen : datetime
+        +ThoiGianDuocXacMinh : datetime
+        +XacMinhBoiAdmin
+    }
+
+    class ThongTinChuKySo {
+        <<ValueObject>>
+        +CoChuKySo
+        +HopLe
+        +NhaCungCap
+        +NhaCungCapDuocTinTuong
+        +NgayHetHan
+        +XacMinhLuc
+    }
+
+    class UyTinToChuc {
+        <<ValueObject>>
+        +Diem
+        +SoLuongBangCapPhatHanh
+        +SoLuongBangCapThuHoi
+        +SoLuongBangCapBiBaoCaoGianLan
+        +SoLuongXacMinhHopLe
+        +XepHangHienTai
+    }
+
+    %% ============================================================
+    %% SERVICE / BOUNDARY
+    %% ============================================================
+
+    class Admin {
+        <<service>>
+        +Id
+        +XacNhanDangKyCuaToChuc()
+        +TuChoiDangKyCuaToChuc()
+        +CapQuyenChoToChuc()
+        +HuyQuyenHanCuaToChuc()
+        +CapNhatQuyenHanChoToChuc()
+    }
+
+    %% ============================================================
+    %% ENUMERATIONS
+    %% ============================================================
+
+    class LoaiBangCap {
+        <<enumeration>>
+        CaoDang
+        CuNhan
+        KySu
+        ThacSi
+        TienSi
+        ChungChiNgoaiNgu
+        ChungChiTinHoc
+        ChungChiNgheNghiep
+        BangDiem
+        GiayChungNhanTotNghiepTam
+        ChungNhanHoanThanhKhoaHoc
+        ChungNhanThucTap
+        GiayKhenThuong
+    }
+
+    class LyDoHuy {
+        <<enumeration>>
+        LoiNhapLieu
+        NhapTrungLap
+        YeuCauCuaSinhVien
+        YeuCauCuaCSDT
+        Khac
+    }
+
+    class LyDoThuHoi {
+        <<enumeration>>
+        ViPhamHocThuat
+        ViPhamDaoDuc
+        BangGia
+        GianLanXacNhan
+        ThayDoiQuyDinh
+        QuyetDinhPhapLy
+        Khac
+    }
+
+    class TrangThaiBlockchain {
+        <<enumeration>>
+        ChoDuyet
+        XacNhan
+        ThatBai
+    }
+
+    class TrangThaiBangCap {
+        <<enumeration>>
+        Nhap
+        DaXacNhan
+        DaThuHoi
+        DaHuy
+    }
+
+    class KetQuaXacMinhEnum {
+        <<enumeration>>
+        HopLe
+        KhongHopLe
+        DaThuHoi
+        KhongTonTai
+        GianLan
+    }
+
+    class TrangThaiUngTuyen {
+        <<enumeration>>
+        ChoXem
+        DaXem
+        TuChoi
+        ChapNhan
+        DaThuHoi
+    }
+
+    class TrangThaiYeuCauDangKy {
+        <<enumeration>>
+        Nhap
+        DaGui
+        XacNhan
+        TuChoi
+    }
+
+    class LyDoTuChoi {
+        <<enumeration>>
+        GiayToKhongHopLe
+        ChuKySoKhongHopLe
+        ThieuGiayToYeuCau
+        ThongTinKhongChinhXac
+        ToChucDaTonTai
+        KhongDuDieuKienHoatDong
+        LyDoKhac
+    }
+
+    class LoaiToChucDangKy {
+        <<enumeration>>
+        CoSoDaoTao
+        NhaTuyenDung
+    }
+
+    class KieuGiayPhepCSDT {
+        <<enumeration>>
+        GiayPhepHoatDongGiaoDuc
+        QuyetDinhThanhLapTruong
+        GiayCongNhanNganhDaoTao
+        XacNhanDangKyVoiBoGDDT
+    }
+
+    class KieuGiayPhepNTD {
+        <<enumeration>>
+        GiayPhepDangKyKinhDoanh
+        MaSoThue
+        CongVanXacNhanBoPhanHR
+    }
+
+    class HangUyTin {
+        <<enumeration>>
+        ChuaCoGiayPhep
+        Dong
+        Bac
+        Vang
+        DaCoGiayPhep
+    }
+
+    class TrangThaiXacMinhGiayPhep {
+        <<enumeration>>
+        ChoXacMinh
+        DaXacMinh
+        TuChoi
+        TaiLenLai
+    }
+
+    class TrangThaiBaoCao {
+        <<enumeration>>
+        ChoXuLy
+        DangXuLy
+        DaXuLy
+        TuChoi
+    }
+
+    %% ============================================================
+    %% RELATIONSHIPS — COMPOSITION (◆)
+    %% ============================================================
+
+    %% GiayPhep thuộc YeuCauDangKy trong giai đoạn đăng ký
+    %% Sau khi Admin duyệt → chuyển sang CSDT/NTD
+    %% Tùy LoaiToChucDangKy, chỉ 1 trong 2 loại giấy phép tồn tại
+    YeuCauDangKy "1" *-- "0..*" GiayPhepCSDT : giai đoạn đăng ký
+    YeuCauDangKy "1" *-- "0..*" GiayPhepNhaTuyenDung : giai đoạn đăng ký
+
+    %% GiayPhep thuộc CSDT/NTD sau khi duyệt thành công
+    CoSoDaoTao "1" *-- "0..*" GiayPhepCSDT : sau khi duyệt
+    NhaTuyenDung "1" *-- "0..*" GiayPhepNhaTuyenDung : sau khi duyệt
+
+    CoSoDaoTao "1" *-- "1" UyTinToChuc
+    NhaTuyenDung "1" *-- "0..*" ThongTinTuyenDung
+    GiayPhepCSDT "1" *-- "1" ThongTinChuKySo
+    GiayPhepNhaTuyenDung "1" *-- "1" ThongTinChuKySo
+    HoSoUngTuyen "1" *-- "1..*" BangCapUngTuyen
+
+    %% ============================================================
+    %% RELATIONSHIPS — AGGREGATION (◇)
+    %% ============================================================
+
+    CoSoDaoTao "1" o-- "0..*" BangCap : cấp
+
+    %% ============================================================
+    %% RELATIONSHIPS — ASSOCIATION (many-to-many)
+    %% ============================================================
+
+    CoSoDaoTao "0..*" -- "0..*" SinhVien : quản lý
+
+    %% ============================================================
+    %% RELATIONSHIPS — DIRECTED ASSOCIATION (→)
+    %% ============================================================
+
+    CoSoDaoTao --> LinhVuc : biết tới
+    BangCap --> LinhVuc : thuộc
+    BangCap --> LoaiBangCap
+    BangCap --> LyDoHuy
+    BangCap --> LyDoThuHoi
+    BangCap --> TrangThaiBlockchain
+    BangCap --> TrangThaiBangCap
+
+    SinhVien "1" --> "0..*" HoSoUngTuyen : nộp
+
+    NhatKyXacMinh --> NhaTuyenDung : thực hiện bởi
+    NhatKyXacMinh --> BangCap : xác minh
+    NhatKyXacMinh --> KetQuaXacMinhEnum
+
+    ThongTinTuyenDung --> LinhVuc : thuộc
+    ThongTinTuyenDung "1" --> "0..*" KetQuaPhanTich : có nhiều lần phân tích
+
+    HoSoUngTuyen --> ThongTinTuyenDung : ứng tuyển vào
+    HoSoUngTuyen --> TrangThaiUngTuyen
+
+    BangCapUngTuyen --> BangCap : tham chiếu
+
+    BaoCaoGianLan --> BangCap : báo cáo về
+    BaoCaoGianLan --> SinhVien : báo cáo bởi SV
+    BaoCaoGianLan --> NhaTuyenDung : báo cáo bởi NTD
+    BaoCaoGianLan --> TrangThaiBaoCao
+
+    YeuCauDangKy --> TrangThaiYeuCauDangKy
+    YeuCauDangKy --> LyDoTuChoi
+    YeuCauDangKy --> LoaiToChucDangKy
+
+    GiayPhepCSDT --> KieuGiayPhepCSDT
+    GiayPhepCSDT --> TrangThaiXacMinhGiayPhep
+    GiayPhepNhaTuyenDung --> KieuGiayPhepNTD
+    GiayPhepNhaTuyenDung --> TrangThaiXacMinhGiayPhep
+
+    UyTinToChuc --> HangUyTin

@@ -27,5 +27,12 @@ ChainDegree/ChainDegree.API/appsettings.Development.json
 ChainDegree/ChainDegree.API/appsettings.Local.json
 ChainDegree/ChainDegree.API/appsettings.json
 
+## [QDRANT] - Dữ liệu runtime của Qdrant
+qdrant_storage/
+
+## [ML MODELS] - File model nặng, tải lại bằng install script
+ChainDegree/Models/*
+!ChainDegree/Models/install_reranker.ps1
+
 ## [CLAUDE] - Local settings
 .claude/
