@@ -1,4 +1,8 @@
 using ChainDegree.Domain.QuanLyBangCap.Entities;
+using ChainDegree.Domain.QuanLyBangCap.Enums;
+using ChainDegree.Domain.QuanLyBangCap.ValueObjects;
+using ChainDegree.SharedKernel.QuanLyBangCap.BangCap;
+using ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao;
 using ControlHub.Domain.Identity.Aggregates;
 using ControlHub.SharedKernel.Results;
 
@@ -13,8 +17,10 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
         public DateTime ThoiGianTao { get; private set; }
         public DateTime ThoiGianCapNhat { get; private set; }
         public DateTime ThoiGianXoa { get; private set; }
+        public List<GiayPhepCSDT> DanhSachGiayPhepCSDT { get; private set; } = new List<GiayPhepCSDT>();
 
-        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT, Guid tkId, DateTime thoiGianTao, DateTime thoiGianCapNhat, DateTime thoiGianXoa)
+        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT,
+            Guid tkId, DateTime thoiGianTao, DateTime thoiGianCapNhat, DateTime thoiGianXoa)
         {
             Id = id;
             Ten = ten;
@@ -25,9 +31,21 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             ThoiGianXoa = thoiGianXoa;
         }
 
-        public static CoSoDaoTao Create(string ten, string diaChiViCSDT, Guid tkId)
+        public static Result Create(string ten, string diaChiViCSDT, Guid tkId,
+            List<GiayPhepCSDT> danhSachGiayPhepCSDT)
         {
-            return new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId, DateTime.UtcNow, DateTime.UtcNow, DateTime.MinValue);
+            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId,
+                DateTime.UtcNow, DateTime.UtcNow, DateTime.MinValue);
+
+            if(danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count <= 0)
+                return Result.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
+
+            foreach(var giayPhep in danhSachGiayPhepCSDT)
+            {
+                csdt.DanhSachGiayPhepCSDT.Add(giayPhep);
+            }
+
+            return Result.Success();
         }
 
         public Result<SinhVien> TaoSinhVien(string ten, string cccd, string email, string diaChiViSinhVien, Guid tkId)
@@ -53,9 +71,41 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             return Result<CoSoDaoTao>.Success(this);
         }
 
-        public Result<BangCap> TaoBangCapChoSinhVien()
+        public Result TaoBangCapChoSinhVien(
+            string ten,
+            double? diem,
+            LoaiBangCap loaiBangCap,
+            Guid linhVucId,
+            string? file,
+            string? link,
+            DateTime ngayCap,
+            DateTime ngayHetHan,
+            string salt,
+            Guid coSoDaoTaoId,
+            Guid sinhVienId
+            )
         {
-            Account acc = 
+            // Nếu là BangDiem thì phải có điểm, ngược lại không được có điểm
+            if(loaiBangCap == LoaiBangCap.BangDiem)
+            {
+                if(diem == null)
+                {
+                    return Result.Failure(BangCapError.ThieuThuocTinhDiem);
+                }
+
+            }
+            else
+            {
+                if(diem != null)
+                {
+                    return Result.Failure(BangCapError.ThuaThuocTinhDiem);
+                }
+            }
+
+            if(ngayCap == ngayHetHan)
+            {
+                return Result.Failure(BangCapError.HanSuDungBangCapKhongHopLe);
+            }
         }
     }
 }
