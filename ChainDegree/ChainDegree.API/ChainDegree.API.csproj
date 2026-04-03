@@ -25,6 +25,8 @@
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks.json" />
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks_batch2.json" />
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\sample_runbooks.json" />
+    <Content Remove="C:\Users\tokie\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks.json" />
+    <Content Remove="C:\Users\tokie\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks_batch2.json" />
   </ItemGroup>
 
   <ItemGroup>

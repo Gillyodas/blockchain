@@ -53,9 +53,11 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             return Result<CoSoDaoTao>.Success(this);
         }
 
-        public Result<BangCap> TaoBangCapChoSinhVien()
-        {
-            Account acc = 
-        }
+        /*       public Result<BangCap> TaoBangCapChoSinhVien()
+                {
+                    Account acc = 
+                }
+            }
+        } */
     }
 }
