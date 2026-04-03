@@ -6,8 +6,8 @@ namespace ChainDegree.Domain.QuanLyBangCap.Enums;
 
 public enum TrangThaiBangCap
 {
-    Nhap = 0,
-    HoatDong = 1,
+    ChuaXacNhan = 0,
+    DaXacNhan = 1,
     DaThuHoi = 2,
     DaHuy = 3
 }

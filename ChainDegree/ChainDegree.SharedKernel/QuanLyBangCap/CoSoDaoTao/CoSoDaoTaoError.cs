@@ -12,5 +12,8 @@ namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
 
         public static readonly Error SaiDinhDangEmail =
             Error.Validation("CoSoDaoTao.SaiDinhDangEmail", "Sai định dạng email");
+
+        public static readonly Error ThieuThongTinGiayPhepCSDT =
+            Error.Validation("CoSoDaoTao.ThieuThongTinGiayPhepCSDT", "Thiếu thông tin giấy phép cơ sở đào tạo, danh sách giấy phép cơ sở đào tạo không được bỏ trống");
     }
 }

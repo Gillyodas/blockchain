@@ -40,7 +40,7 @@ ChainDegree là nền tảng quản lý và xác minh bằng cấp học thuật
 ### 1.2. Nguyên tắc luồng dữ liệu
 
 - **Ghi blockchain:** Chỉ thực hiện sau khi ghi SQL Server thành công. Nếu ghi blockchain thất bại, sẽ đưa vào hàng đợi Outbox để retry — không bao giờ để trạng thái không nhất quán.
-- **Hash bằng cấp:** `credentialHash = keccak256(toàn bộ dữ liệu bằng cấp đã chuẩn hóa + salt)`. Là bằng chứng duy nhất ghi trên smart contract. Hash không được thay đổi sau khi tạo.
+- **Hash bằng cấp:** `credentialHash = keccak256(toàn bộ dữ liệu bằng cấp đã chuẩn hóa + salt)`. Là bằng chứng duy nhất ghi trên smart contract. Hash không được thay đổi sau khi tạo. Smart contract chỉ lưu: `credentialHash → { exists, revoked, issuerAddress, timestamp }` — mọi metadata nghiệp vụ khác (lý do thu hồi, ghi chú, thông tin sinh viên) đều lưu tại SQL Server.
 - **Cập nhật bằng cấp:** Khi CSDT cần sửa thông tin bằng, hệ thống tự động thu hồi bản cũ + cấp lại bản mới trên blockchain, đảm bảo tính bất biến.
 - **Điểm uy tín (UyTinToChuc):** Tính toán off-chain tại SQL Server. UyTin là tín hiệu tin cậy (AI và NTD tham khảo), không phải cơ chế kiểm soát quyền.
 
@@ -228,7 +228,9 @@ Hủy bằng là **hủy bỏ vĩnh viễn** — bằng cấp không còn tồn 
 | `NhapTrungLap` | Cấp trùng bằng cho cùng SV | −5 điểm |
 | `YeuCauCuaSinhVien` | SV yêu cầu hủy | 0 điểm |
 | `YeuCauCuaCSDT` | CSDT tự hủy vì lý do nội bộ | 0 điểm |
-| `Khac` | Lý do khác (bắt buộc nhập GhiChuHuy) | 0 điểm |
+| `Khac` | Lý do khác — **bắt buộc nhập `GhiChuHuy`**, không được để trống | 0 điểm |
+
+> **Ràng buộc:** Khi `LyDoHuy = Khac`, trường `GhiChuHuy` là bắt buộc. Hệ thống từ chối xử lý nếu `GhiChuHuy` null hoặc rỗng.
 
 ---
 
@@ -246,7 +248,7 @@ Thu hồi bằng là **tạm ngưng hiệu lực** — bằng vẫn tồn tại,
 | Bước | Hành động | Kết quả |
 |---|---|---|
 | 1 | Issuer vào danh sách bằng cấp → chọn bằng → nhấn **Thu hồi**. | Dialog xác nhận hiển thị. |
-| 2 | Issuer chọn `LyDoThuHoi` (enum) + nhập `GhiChuThuHoi` (bắt buộc). | Lý do được ghi nhận. |
+| 2 | Issuer chọn `LyDoThuHoi` (enum) + nhập `GhiChuThuHoi` (tùy chọn). | Lý do được ghi nhận. |
 | 3 | **[Tự động]** Hệ thống cập nhật SQL: `TrangThaiBangCap = DaThuHoi`, lưu `LyDoThuHoi` + `GhiChuThuHoi`. | — |
 | 4 | **[Tự động]** Gọi smart contract `revokeCredential(credentialHash)`. | Blockchain: `revoked = true`. |
 | 5 | Điểm uy tín Issuer bị trừ theo loại lý do (xem bảng 6.3). | — |
@@ -262,7 +264,9 @@ Thu hồi bằng là **tạm ngưng hiệu lực** — bằng vẫn tồn tại,
 | `GianLanXacNhan` | Gian lận trong quá trình xác nhận bằng | **−200 điểm** |
 | `ThayDoiQuyDinh` | Thay đổi quy định cấp bằng của tổ chức | −5 điểm |
 | `QuyetDinhPhapLy` | Quyết định từ cơ quan pháp luật | 0 điểm |
-| `Khac` | Lý do khác (bắt buộc nhập GhiChuThuHoi) | 0 điểm |
+| `Khac` | Lý do khác — **bắt buộc nhập `GhiChuThuHoi`**, không được để trống | 0 điểm |
+
+> **Ràng buộc:** Khi `LyDoThuHoi = Khac`, trường `GhiChuThuHoi` là bắt buộc. Hệ thống từ chối xử lý nếu `GhiChuThuHoi` null hoặc rỗng.
 
 ---
 
@@ -278,12 +282,14 @@ Thu hồi bằng là **tạm ngưng hiệu lực** — bằng vẫn tồn tại,
 | Bước | Hành động | Kết quả |
 |---|---|---|
 | 1 | Issuer vào danh sách bằng đã thu hồi → chọn bằng → nhấn **Khôi phục**. | Dialog xác nhận hiển thị. |
-| 2 | Issuer nhập lý do khôi phục (bắt buộc). | — |
-| 3 | **[Tự động]** Hệ thống tạo bản ghi `BangCap` mới với dữ liệu cũ + `Salt` mới → tính `credentialHash` mới. | Hash mới được tạo. |
+| 2 | Issuer chọn `LyDoKhoiPhuc` (enum) + nhập `GhiChuKhoiPhuc`. Nếu `LyDoKhoiPhuc = Khac`, `GhiChuKhoiPhuc` là **bắt buộc**. | — |
+| 3 | **[Tự động]** Hệ thống ghi nhận `LyDoKhoiPhuc` + `GhiChuKhoiPhuc` vào bản ghi cũ (giữ nguyên trạng thái `DaThuHoi`). Tạo bản ghi `BangCap` mới với dữ liệu cũ + `Salt` mới → tính `credentialHash` mới. | Bản cũ: vẫn `DaThuHoi` trên blockchain (lịch sử kiểm toán). Hash mới được tạo cho bản mới. |
 | 4 | **[Tự động]** Gọi smart contract `issueCredential(newCredentialHash, holderAddress)`. | Bản mới lên blockchain. Bản cũ vẫn revoked trên chain (lịch sử). |
-| 5 | `TrangThaiBangCap = DaXacNhan`. Sinh viên nhận thông báo. | — |
+| 5 | Bản mới: `TrangThaiBangCap = ChuaXacNhan`, chờ Outbox confirm. Sau khi blockchain xác nhận: `TrangThaiBangCap = DaXacNhan`. Sinh viên nhận thông báo. | — |
 
-> **Lưu ý:** Khôi phục thực chất là cấp lại bản mới (hash mới) trên blockchain. Bản cũ (đã revoke) vẫn tồn tại trên chain như lịch sử kiểm toán.
+> **Ràng buộc:** Khi `LyDoKhoiPhuc = Khac`, trường `GhiChuKhoiPhuc` là bắt buộc. Hệ thống từ chối xử lý nếu `GhiChuKhoiPhuc` null hoặc rỗng.
+
+> **Lưu ý:** Khôi phục thực chất là cấp lại bản mới (hash mới) trên blockchain. Bản cũ (đã revoke) vẫn tồn tại trên chain như lịch sử kiểm toán — trạng thái `DaThuHoi` của bản cũ không thay đổi. Lý do và ghi chú khôi phục lưu tại SQL Server, không ghi lên blockchain.
 
 ---
 
