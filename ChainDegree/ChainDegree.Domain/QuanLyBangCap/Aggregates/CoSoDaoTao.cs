@@ -1,6 +1,7 @@
 using ChainDegree.Domain.QuanLyBangCap.Entities;
 using ChainDegree.Domain.QuanLyBangCap.Enums;
 using ChainDegree.Domain.QuanLyBangCap.ValueObjects;
+using ChainDegree.Domain.QuanLyToChuc.Enums;
 using ChainDegree.SharedKernel.QuanLyBangCap.BangCap;
 using ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao;
 using ControlHub.Domain.Identity.Aggregates;
@@ -18,6 +19,7 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
         public DateTime ThoiGianCapNhat { get; private set; }
         public DateTime ThoiGianXoa { get; private set; }
         public List<GiayPhepCSDT> DanhSachGiayPhepCSDT { get; private set; } = new List<GiayPhepCSDT>();
+        public HangUyTin HangUyTin { get; private set; }
 
         private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT,
             Guid tkId, DateTime thoiGianTao, DateTime thoiGianCapNhat, DateTime thoiGianXoa)
@@ -31,16 +33,21 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             ThoiGianXoa = thoiGianXoa;
         }
 
-        public static Result Create(string ten, string diaChiViCSDT, Guid tkId,
+        internal static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT, Guid tkId,
             List<GiayPhepCSDT> danhSachGiayPhepCSDT)
         {
             CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId,
                 DateTime.UtcNow, DateTime.UtcNow, DateTime.MinValue);
 
             if(danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count <= 0)
-                return Result.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
+                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
 
-            return Result.Success();
+            foreach(var giayPhep in danhSachGiayPhepCSDT)
+            {
+                csdt.DanhSachGiayPhepCSDT.Add(giayPhep);
+            }
+
+            return Result<CoSoDaoTao>.Success(csdt);
         }
 
         public Result<SinhVien> TaoSinhVien(string ten, string cccd, string email, string diaChiViSinhVien, Guid tkId)
@@ -80,7 +87,6 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             Guid sinhVienId
             )
         {
-
         }
     }
 }
