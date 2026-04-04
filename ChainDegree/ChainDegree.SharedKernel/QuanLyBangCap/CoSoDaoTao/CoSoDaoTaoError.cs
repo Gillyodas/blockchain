@@ -14,6 +14,13 @@ namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
             Error.Validation("CoSoDaoTao.SaiDinhDangEmail", "Sai định dạng email");
 
         public static readonly Error ThieuThongTinGiayPhepCSDT =
-            Error.Validation("CoSoDaoTao.ThieuThongTinGiayPhepCSDT", "Thiếu thông tin giấy phép cơ sở đào tạo, danh sách giấy phép cơ sở đào tạo không được bỏ trống");
+            Error.Validation("CoSoDaoTao.ThieuThongTinGiayPhepCSDT",
+                "Thiếu thông tin giấy phép cơ sở đào tạo, ít nhất phải có 2 loại giấy phép là Giấy phép hoạt động giáo dục và Quyết định thành lập trường");
+
+        public static readonly Error ThieuGiayPhepHoatDongGiaoDuc =
+            Error.Validation("CoSoDaoTao.ThieuGiayPhepHoatDongGiaoDuc", "Thiếu giấy phép hoạt động giáo dục");
+
+        public static readonly Error ThieuQuyetDinhThanhLapTruong =
+            Error.Validation("CoSoDaoTao.ThieuQuyetDinhThanhLapTruong", "Thiếu quyết định thành lập trường");
     }
 }

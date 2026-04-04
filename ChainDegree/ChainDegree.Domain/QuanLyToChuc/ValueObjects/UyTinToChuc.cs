@@ -2,41 +2,69 @@ using System;
 using System.Collections.Generic;
 using ControlHub.Domain.SharedKernel;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
+using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 
 public class UyTinToChuc : ValueObject
 {
     public int DiemUyTin { get; private set; }
-    public int SoLuongXacMinhHopLe { get; private set; }
-    public int SoLuongBangCapBiBaoCaoGianLan { get; private set; }
+    public int SoLuongXacMinhHopLe { get; private set; } = 0;
+    public int SoLuongBangCapBiBaoCaoGianLan { get; private set; } = 0;
+    public int SoLuongBangCapThuHoi { get; private set; } = 0;
+    public int SoLuongBangCapPhatHanh { get; private set; } = 0;
     public HangUyTin Hang { get; private set; }
 
-    private UyTinToChuc(int diemUyTin)
+    private const int DIEM_SO_VOI_MOI_GIAY_PHEP = 50;
+
+    private UyTinToChuc(
+    int diemUyTin,
+    int soLuongXacMinhHopLe,
+    int soLuongBangCapBiBaoCaoGianLan,
+    int soLuongBangCapThuHoi,
+    int soLuongBangCapPhatHanh)
     {
         DiemUyTin = diemUyTin;
-        SoLuongXacMinhHopLe = 0;
-        SoLuongBangCapBiBaoCaoGianLan = 0;
+        SoLuongXacMinhHopLe = soLuongXacMinhHopLe;
+        SoLuongBangCapBiBaoCaoGianLan = soLuongBangCapBiBaoCaoGianLan;
+        SoLuongBangCapThuHoi = soLuongBangCapThuHoi;
+        SoLuongBangCapPhatHanh = soLuongBangCapPhatHanh;
         CapNhatHangUyTin();
     }
 
-    public static UyTinToChuc KhoiTaoBanDau()
+    public static UyTinToChuc KhoiTao(int soLuongGiayPhep)
     {
-        return new UyTinToChuc(100);
+        return new UyTinToChuc(soLuongGiayPhep * DIEM_SO_VOI_MOI_GIAY_PHEP, 0, 0, 0, 0);
     }
 
-    public void CongDiemXacMinhHopLe()
+    public UyTinToChuc ThemGiayPhep()
     {
-        SoLuongXacMinhHopLe++;
-        DiemUyTin += 1;
-        CapNhatHangUyTin();
+        return new UyTinToChuc(
+            DiemUyTin + DIEM_SO_VOI_MOI_GIAY_PHEP,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi,
+            SoLuongBangCapPhatHanh);
     }
 
-    public void TruDiemBangCapGianLan()
+    public UyTinToChuc CongDiemXacMinhHopLe()
     {
-        SoLuongBangCapBiBaoCaoGianLan++;
-        DiemUyTin -= 200;
-        CapNhatHangUyTin();
+        return new UyTinToChuc(
+            DiemUyTin + 1,
+            SoLuongXacMinhHopLe + 1,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi,
+            SoLuongBangCapPhatHanh);
+    }
+
+    public UyTinToChuc TruDiemBangCapGianLan()
+    {
+        return new UyTinToChuc(
+            DiemUyTin - 200,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan + 1,
+            SoLuongBangCapThuHoi,
+            SoLuongBangCapPhatHanh);
     }
 
     private void CapNhatHangUyTin()

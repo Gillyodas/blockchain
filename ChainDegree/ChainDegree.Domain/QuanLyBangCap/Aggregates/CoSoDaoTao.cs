@@ -1,10 +1,8 @@
 using ChainDegree.Domain.QuanLyBangCap.Entities;
 using ChainDegree.Domain.QuanLyBangCap.Enums;
-using ChainDegree.Domain.QuanLyBangCap.ValueObjects;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
-using ChainDegree.SharedKernel.QuanLyBangCap.BangCap;
+using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao;
-using ControlHub.Domain.Identity.Aggregates;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
@@ -15,37 +13,42 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
         public string Ten { get; private set; }
         public string DiaChiViCSDT { get; private set; }
         public Guid TKId { get; private set; }
-        public DateTime ThoiGianTao { get; private set; }
-        public DateTime ThoiGianCapNhat { get; private set; }
-        public DateTime ThoiGianXoa { get; private set; }
-        public List<GiayPhepCSDT> DanhSachGiayPhepCSDT { get; private set; } = new List<GiayPhepCSDT>();
-        public HangUyTin HangUyTin { get; private set; }
+        public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
+        public DateTime? ThoiGianCapNhat { get; private set; }
+        public DateTime? ThoiGianXoa { get; private set; }
+        private readonly List<GiayPhepCSDT> _danhSachGiayPhepCSDT = new();
+        public IReadOnlyCollection<GiayPhepCSDT> DanhSachGiayPhepCSDT
+            => _danhSachGiayPhepCSDT.AsReadOnly();
+        public UyTinToChuc UyTin { get; private set; }
 
         private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT,
-            Guid tkId, DateTime thoiGianTao, DateTime thoiGianCapNhat, DateTime thoiGianXoa)
+            Guid tkId, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin)
         {
             Id = id;
             Ten = ten;
             DiaChiViCSDT = diaChiViCSDT;
             TKId = tkId;
-            ThoiGianTao = thoiGianTao;
-            ThoiGianCapNhat = thoiGianCapNhat;
-            ThoiGianXoa = thoiGianXoa;
+            _danhSachGiayPhepCSDT = new List<GiayPhepCSDT>(danhSachGiayPhepCSDT); ;
+            UyTin = uyTin;
         }
 
-        internal static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT, Guid tkId,
+        public static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT, Guid tkId,
             List<GiayPhepCSDT> danhSachGiayPhepCSDT)
         {
-            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId,
-                DateTime.UtcNow, DateTime.UtcNow, DateTime.MinValue);
-
-            if(danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count <= 0)
+            // Ít nhất phải có 2 giấy phép: Giấy phép hoạt động giáo dục và Quyết định thành lập trường
+            if (danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count < 2)
                 return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
 
-            foreach(var giayPhep in danhSachGiayPhepCSDT)
-            {
-                csdt.DanhSachGiayPhepCSDT.Add(giayPhep);
-            }
+            if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.GiayPhepHoatDongGiaoDuc))
+                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuGiayPhepHoatDongGiaoDuc);
+            if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.QuyetDinhThanhLapTruong))
+                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuQuyetDinhThanhLapTruong);
+
+            Result<UyTinToChuc> resultKhoiTaoUyTinBanDau = UyTinToChuc.KhoiTaoBanDau(danhSachGiayPhepCSDT.Count());
+            if(resultKhoiTaoUyTinBanDau.IsFailure)
+                return Result<CoSoDaoTao>.Failure(resultKhoiTaoUyTinBanDau.Error);
+
+            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId, danhSachGiayPhepCSDT, resultKhoiTaoUyTinBanDau.Value);
 
             return Result<CoSoDaoTao>.Success(csdt);
         }
@@ -60,20 +63,23 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             throw new NotImplementedException();
         }
 
-        public Result<SinhVien> CapNhatThongTinSinhVien()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Result<CoSoDaoTao> CapNhatThongTinCSDT(string ten, string diaChiViCSDT)
+        public Result CapNhatThongTinCSDT(string ten, string diaChiViCSDT)
         {
             Ten = ten;
             DiaChiViCSDT = diaChiViCSDT;
             ThoiGianCapNhat = DateTime.UtcNow;
-            return Result<CoSoDaoTao>.Success(this);
+            return Result.Success();
         }
 
-        public Result TaoBangCapChoSinhVien(
+        public Result ThemGiayPhepCSDT(GiayPhepCSDT giayPhepCSDT)
+        {
+            _danhSachGiayPhepCSDT.Add(giayPhepCSDT);
+            UyTin = UyTin.ThemGiayPhep();
+            ThoiGianCapNhat = DateTime.UtcNow;
+            return Result.Success();
+        }
+
+        public Result<BangCap> TaoBangCapChoSinhVien(
             string ten,
             double? diem,
             LoaiBangCap loaiBangCap,
@@ -87,6 +93,7 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             Guid sinhVienId
             )
         {
+            
         }
     }
 }

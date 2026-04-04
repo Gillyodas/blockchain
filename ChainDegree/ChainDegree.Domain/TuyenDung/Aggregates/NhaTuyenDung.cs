@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChainDegree.Domain.QuanLyToChuc.Enums;
 using ChainDegree.Domain.TuyenDung.Entities;
 using ChainDegree.Domain.TuyenDung.ValueObjects;
 using ControlHub.SharedKernel.Common.Errors;
@@ -22,6 +23,7 @@ public class NhaTuyenDung
     public DateTime ThoiGianTao { get; private set; }
     public DateTime ThoiGianCapNhat { get; private set; } = DateTime.MinValue;
     public DateTime ThoiGianXoa { get; private set; } = DateTime.MinValue;
+    public HangUyTin HangUyTin { get; private set; }
 
     private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId DateTime thoiGianTao,
     {

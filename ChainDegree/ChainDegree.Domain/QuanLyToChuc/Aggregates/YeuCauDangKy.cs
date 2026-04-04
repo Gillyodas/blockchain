@@ -47,13 +47,15 @@ public class YeuCauDangKy
     private readonly List<GiayPhepNhaTuyenDung> _giayPhepNTDs = new();
     public IReadOnlyCollection<GiayPhepNhaTuyenDung> GiayPhepNTDs => _giayPhepNTDs.AsReadOnly();
 
-    public Result ThemGiayPhep(string duongDanLuuTru, LoaiGiayPhepCSDT loai)
+    public Result ThemGiayPhep(string duongDanLuuTru, LoaiGiayPhepCSDT loai, DateTime thoiGianHetHan)
     {
         if (TrangThai != TrangThaiYeuCauDangKy.Nhap)
             return Result.Failure(QuanLyToChucError.HoSoDaGuiKhongDuocSua);
+
         if (Loai != LoaiToChuc.Issuer)
             return Result.Failure(QuanLyToChucError.SaiLoaiGiayPhep);
-        var result = GiayPhepCSDT.Create(duongDanLuuTru, loai);
+
+        var result = GiayPhepCSDT.Create(duongDanLuuTru, loai, thoiGianHetHan);
         if (result.IsFailure) return Result.Failure(result.Error);
         _giayPhepCSDTs.Add(result.Value);
         return Result.Success();
