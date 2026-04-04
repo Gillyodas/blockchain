@@ -44,11 +44,9 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.QuyetDinhThanhLapTruong))
                 return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuQuyetDinhThanhLapTruong);
 
-            Result<UyTinToChuc> resultKhoiTaoUyTinBanDau = UyTinToChuc.KhoiTaoBanDau(danhSachGiayPhepCSDT.Count());
-            if(resultKhoiTaoUyTinBanDau.IsFailure)
-                return Result<CoSoDaoTao>.Failure(resultKhoiTaoUyTinBanDau.Error);
+            UyTinToChuc uyTinKhoiTao = UyTinToChuc.KhoiTao(danhSachGiayPhepCSDT.Count());
 
-            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId, danhSachGiayPhepCSDT, resultKhoiTaoUyTinBanDau.Value);
+            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId, danhSachGiayPhepCSDT, uyTinKhoiTao);
 
             return Result<CoSoDaoTao>.Success(csdt);
         }
@@ -87,13 +85,53 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             string? file,
             string? link,
             DateTime ngayCap,
-            DateTime ngayHetHan,
-            string salt,
-            Guid coSoDaoTaoId,
-            Guid sinhVienId
-            )
+            DateTime? ngayHetHan,
+            Guid sinhVienId)
         {
-            
+            return BangCap.Create(ten, diem, loaiBangCap, linhVucId, ngayCap, ngayHetHan, file, link, this.Id, sinhVienId);
+        }
+
+        public Result GanMaBamXacThucChoBangCap(BangCap bangCap, string maBamXacThuc, string salt)
+        {
+            return bangCap.GanMaBamXacThuc(maBamXacThuc, salt);
+        }
+
+        public Result GanMaBamGiaoDichChoBangCap(BangCap bangCap, string maBamGiaoDich)
+        {
+            var result = bangCap.GanMaBamGiaoDich(maBamGiaoDich);
+            if (result.IsFailure) return result;
+
+            UyTin = UyTin.CongDiemCapBangThanhCong();
+            return result;
+        }
+
+        public Result HuyBangCap(BangCap bangCap, LyDoHuy lyDoHuy, string? ghiChuHuy)
+        {
+            var result = bangCap.DanhDauHuy(lyDoHuy, ghiChuHuy, this.Id);
+            if (result.IsFailure) return result;
+
+            if (lyDoHuy == LyDoHuy.LoiNhapLieu || lyDoHuy == LyDoHuy.NhapTrungLap)
+                UyTin = UyTin.TruDiemHuyBangLoiNhapLieu();
+
+            return result;
+        }
+
+        public Result ThuHoiBangCap(BangCap bangCap, LyDoThuHoi lyDoThuHoi, string? ghiChuThuHoi)
+        {
+            var result = bangCap.DanhDauThuHoi(lyDoThuHoi, ghiChuThuHoi, this.Id);
+            if (result.IsFailure) return result;
+
+            if (lyDoThuHoi == LyDoThuHoi.BangGia || lyDoThuHoi == LyDoThuHoi.GianLanXacNhan)
+                UyTin = UyTin.TruDiemThuHoiGianLan();
+            else if (lyDoThuHoi == LyDoThuHoi.ThayDoiQuyDinh)
+                UyTin = UyTin.TruDiemThuHoiBang();
+
+            return result;
+        }
+
+        public Result<BangCap> KhoiPhucBangCap(BangCap bangCap, LyDoKhoiPhuc lyDoKhoiPhuc, string ghiChuKhoiPhuc)
+        {
+            return bangCap.KhoiPhuc(this.Id, lyDoKhoiPhuc, ghiChuKhoiPhuc);
         }
     }
 }

@@ -67,6 +67,46 @@ public class UyTinToChuc : ValueObject
             SoLuongBangCapPhatHanh);
     }
 
+    public UyTinToChuc CongDiemCapBangThanhCong()
+    {
+        return new UyTinToChuc(
+            DiemUyTin + 2,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi,
+            SoLuongBangCapPhatHanh + 1);
+    }
+
+    public UyTinToChuc TruDiemHuyBangLoiNhapLieu()
+    {
+        return new UyTinToChuc(
+            DiemUyTin - 5,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi,
+            SoLuongBangCapPhatHanh);
+    }
+
+    public UyTinToChuc TruDiemThuHoiBang()
+    {
+        return new UyTinToChuc(
+            DiemUyTin - 5,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi + 1,
+            SoLuongBangCapPhatHanh);
+    }
+
+    public UyTinToChuc TruDiemThuHoiGianLan()
+    {
+        return new UyTinToChuc(
+            DiemUyTin - 200,
+            SoLuongXacMinhHopLe,
+            SoLuongBangCapBiBaoCaoGianLan,
+            SoLuongBangCapThuHoi + 1,
+            SoLuongBangCapPhatHanh);
+    }
+
     private void CapNhatHangUyTin()
     {
         if (DiemUyTin < 100) Hang = HangUyTin.Dong;
