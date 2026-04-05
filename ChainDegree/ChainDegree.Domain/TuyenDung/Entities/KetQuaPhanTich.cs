@@ -1,5 +1,5 @@
 using System;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.Domain.TuyenDung.Errors;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
@@ -13,7 +13,13 @@ public class KetQuaPhanTich
     public string KetLuan { get; private set; }
     public DateTime ThoiGianPhanTich { get; private set; }
 
-    private KetQuaPhanTich(Guid id, Guid thongTinTuyenDungId, Guid hoSoUngTuyenId, double phanTramPhuHop, string ketLuan, DateTime thoiGianPhanTich)
+    private KetQuaPhanTich(
+        Guid id, 
+        Guid thongTinTuyenDungId, 
+        Guid hoSoUngTuyenId, 
+        double phanTramPhuHop, 
+        string ketLuan, 
+        DateTime thoiGianPhanTich)
     {
         Id = id;
         ThongTinTuyenDungId = thongTinTuyenDungId;
@@ -23,16 +29,24 @@ public class KetQuaPhanTich
         ThoiGianPhanTich = thoiGianPhanTich;
     }
 
-    internal static Result<KetQuaPhanTich> Create(Guid thongTinTuyenDungId, Guid hoSoUngTuyenId, double phanTramPhuHop, string ketLuan)
+    internal static Result<KetQuaPhanTich> Create(
+        Guid thongTinTuyenDungId, 
+        Guid hoSoUngTuyenId, 
+        double phanTramPhuHop, 
+        string ketLuan)
     {
         if (phanTramPhuHop < 0 || phanTramPhuHop > 100)
-            return Result<KetQuaPhanTich>.Failure(KetQuaPhanTichError.PhanTramPhuHopKhongHopLe);
+            return Result<KetQuaPhanTich>.Failure(TuyenDungError.PhanTramPhuHopKhongHopLe);
 
         if (string.IsNullOrWhiteSpace(ketLuan))
-            return Result<KetQuaPhanTich>.Failure(KetQuaPhanTichError.KetLuanKhongDuocTrong);
+            return Result<KetQuaPhanTich>.Failure(TuyenDungError.KetLuanKhongDuocTrong);
 
-        var ketQuaPhanTich = new KetQuaPhanTich(Guid.NewGuid(), thongTinTuyenDungId, hoSoUngTuyenId, phanTramPhuHop, ketLuan,DateTime.UtcNow);
-
-        return Result<KetQuaPhanTich>.Success(ketQuaPhanTich);
+        return Result<KetQuaPhanTich>.Success(new KetQuaPhanTich(
+            Guid.NewGuid(), 
+            thongTinTuyenDungId, 
+            hoSoUngTuyenId, 
+            phanTramPhuHop, 
+            ketLuan, 
+            DateTime.UtcNow));
     }
 }

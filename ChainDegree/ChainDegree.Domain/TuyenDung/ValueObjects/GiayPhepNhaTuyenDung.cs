@@ -1,14 +1,9 @@
 using System;
-using ChainDegree.Domain.TuyenDung.Aggregates;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.Domain.TuyenDung.Enums;
+using ChainDegree.Domain.TuyenDung.Errors;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.ValueObjects;
-
-public class GiayPhepError
-{
-    public static readonly Error DuongDanTrong = Error.Validation("GiayPhep.DuongDanTrong", "Đường dẫn lưu trữ giấy phép không được để trống.");
-}
 
 public class GiayPhepNhaTuyenDung
 {
@@ -28,8 +23,14 @@ public class GiayPhepNhaTuyenDung
     public static Result<GiayPhepNhaTuyenDung> Create(string duongDanLuuTru, KieuGiayPhepNTD kieuGiayPhep)
     {
         if (string.IsNullOrWhiteSpace(duongDanLuuTru))
-            return Result<GiayPhepNhaTuyenDung>.Failure(GiayPhepError.DuongDanTrong);
+            return Result<GiayPhepNhaTuyenDung>.Failure(TuyenDungError.DuongDanTrong);
 
         return Result<GiayPhepNhaTuyenDung>.Success(new GiayPhepNhaTuyenDung(duongDanLuuTru, kieuGiayPhep, DateTime.UtcNow));
+    }
+
+    public void XacMinh(Guid adminId)
+    {
+        XacMinhBoiAdminId = adminId;
+        ThoiGianDuocXacMinh = DateTime.UtcNow;
     }
 }

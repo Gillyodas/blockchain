@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChainDegree.Domain.TuyenDung.Aggregates;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.Domain.TuyenDung.Enums;
+using ChainDegree.Domain.TuyenDung.Errors;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
@@ -21,7 +21,12 @@ public class HoSoUngTuyen
 
     public IReadOnlyCollection<BangCapUngTuyen> BangCapUngTuyens => _bangCapUngTuyens.AsReadOnly();
 
-    private HoSoUngTuyen(Guid id, Guid thongTinTuyenDungId, Guid sinhVienId, DateTime thoiGianUngTuyen, TrangThaiUngTuyen trangThai)
+    private HoSoUngTuyen(
+        Guid id, 
+        Guid thongTinTuyenDungId, 
+        Guid sinhVienId, 
+        DateTime thoiGianUngTuyen, 
+        TrangThaiUngTuyen trangThai)
     {
         Id = id;
         ThongTinTuyenDungId = thongTinTuyenDungId;
@@ -33,26 +38,24 @@ public class HoSoUngTuyen
     internal static Result<HoSoUngTuyen> Create(Guid thongTinTuyenDungId, Guid sinhVienId)
     {
         if (thongTinTuyenDungId == Guid.Empty)
-            return Result<HoSoUngTuyen>.Failure(HoSoUngTuyenError.TinTuyenDungKhongHopLe);
+            return Result<HoSoUngTuyen>.Failure(TuyenDungError.TinTuyenDungKhongHopLe);
 
         if (sinhVienId == Guid.Empty)
-            return Result<HoSoUngTuyen>.Failure(HoSoUngTuyenError.SinhVienKhongHopLe);
+            return Result<HoSoUngTuyen>.Failure(TuyenDungError.SinhVienKhongHopLe);
 
-        var hoSoUngTuyen = new HoSoUngTuyen(
+        return Result<HoSoUngTuyen>.Success(new HoSoUngTuyen(
             Guid.NewGuid(),
             thongTinTuyenDungId,
             sinhVienId,
             DateTime.UtcNow,
             TrangThaiUngTuyen.ChoXem
-        );
-
-        return Result<HoSoUngTuyen>.Success(hoSoUngTuyen);
+        ));
     }
 
     public Result ThemBangCapUngTuyen(Guid bangCapId)
     {
         if (TrangThaiUngTuyenHienTai != TrangThaiUngTuyen.ChoXem)
-            return Result.Failure(HoSoUngTuyenError.HoSoDaDuocXem);
+            return Result.Failure(TuyenDungError.HoSoDaDuocXem);
 
         if (_bangCapUngTuyens.Any(x => x.BangCapId == bangCapId))
             return Result.Success();
@@ -69,7 +72,7 @@ public class HoSoUngTuyen
     public Result XoaBangCapUngTuyen(Guid bangCapId)
     {
         if (TrangThaiUngTuyenHienTai != TrangThaiUngTuyen.ChoXem)
-            return Result.Failure(HoSoUngTuyenError.HoSoDaDuocXem);
+            return Result.Failure(TuyenDungError.HoSoDaDuocXem);
 
         var item = _bangCapUngTuyens.FirstOrDefault(x => x.BangCapId == bangCapId);
         if (item != null)
