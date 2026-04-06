@@ -56,11 +56,6 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             return SinhVien.Create(ten, cccd, email, diaChiViSinhVien, tkId);
         }
 
-        public Result HuyLienKetSinhVien()
-        {
-            throw new NotImplementedException();
-        }
-
         public Result CapNhatThongTinCSDT(string ten, string diaChiViCSDT)
         {
             Ten = ten;
@@ -86,9 +81,35 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             string? link,
             DateTime ngayCap,
             DateTime? ngayHetHan,
-            Guid sinhVienId)
+            Guid sinhVienId,
+            IEnumerable<BangCap> bangCapHienTai)
         {
+            bool trung = bangCapHienTai.Any(b =>
+                b.LoaiBangCap == loaiBangCap &&
+                b.LinhVucId == linhVucId &&
+                b.TrangThaiBangCapHienTai == TrangThaiBangCap.DaXacNhan);
+
+            if (trung)
+                return Result<BangCap>.Failure(CoSoDaoTaoError.SinhVienDaCoBangCapCungLoaiVaLinhVuc);
+
             return BangCap.Create(ten, diem, loaiBangCap, linhVucId, ngayCap, ngayHetHan, file, link, this.Id, sinhVienId);
+        }
+
+        public Result<BangCap> CapNhatBangCap(
+            BangCap bangCapCu,
+            string ten,
+            double? diem,
+            LoaiBangCap loaiBangCap,
+            Guid linhVucId,
+            string? file,
+            string? link,
+            DateTime ngayCap,
+            DateTime? ngayHetHan)
+        {
+            var thuHoi = ThuHoiBangCap(bangCapCu, LyDoThuHoi.ThayDoiQuyDinh, null);
+            if (thuHoi.IsFailure) return Result<BangCap>.Failure(thuHoi.Error);
+
+            return BangCap.Create(ten, diem, loaiBangCap, linhVucId, ngayCap, ngayHetHan, file, link, this.Id, bangCapCu.SinhVienId);
         }
 
         public Result GanMaBamXacThucChoBangCap(BangCap bangCap, string maBamXacThuc, string salt)

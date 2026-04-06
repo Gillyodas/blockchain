@@ -17,13 +17,13 @@ public class SinhVien
     public Email Email { get; private set; }
     public string DiaChiViSinhVien { get; private set; }
     public Guid TKId { get; private set; }
-    public DateTime ThoiGianTao { get; private set; } = DateTime.Now;
+    public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
 
     private static readonly Regex _cccdRegex =
-        new(@"/^0\d{2}[0-9]\d{2}\d{6}$/",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        new(@"^0\d{2}[0-9]\d{2}\d{6}$",
+            RegexOptions.Compiled);
 
     private SinhVien(Guid id, string ten, string cccd, Email email, string diaChiViSinhVien, Guid tkId)
     {
@@ -53,5 +53,18 @@ public class SinhVien
         return Result<SinhVien>.Success(sinhVien);
     }
 
-    
+    public Result CapNhatThongTinSinhVien(string ten, string email)
+    {
+        if (string.IsNullOrWhiteSpace(ten))
+            return Result.Failure(CoSoDaoTaoError.TenSinhVienTrong);
+
+        var resultEmail = Email.Create(email);
+        if (resultEmail.IsFailure)
+            return Result.Failure(CoSoDaoTaoError.SaiDinhDangEmail);
+
+        Ten = ten;
+        Email = resultEmail.Value;
+        ThoiGianCapNhat = DateTime.UtcNow;
+        return Result.Success();
+    }
 }

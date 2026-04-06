@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ControlHub.Domain.SharedKernel;
-using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 
@@ -14,13 +12,29 @@ public class ThongTinChuKySo : ValueObject
     public bool NhaCungCapDuocTinTuong { get; private set; }
     public DateTime NgayHetHan { get; private set; }
     public DateTime XacMinhLuc { get; private set; }
-    protected override IEnumerable<object> GetEqualityComponents()
+
+    private ThongTinChuKySo(bool coChuKySo, bool hopLe, string nhaCungCap, bool nhaCungCapDuocTinTuong, DateTime ngayHetHan, DateTime xacMinhLuc)
     {
-        throw new NotImplementedException();
+        CoChuKySo = coChuKySo;
+        HopLe = hopLe;
+        NhaCungCap = nhaCungCap;
+        NhaCungCapDuocTinTuong = nhaCungCapDuocTinTuong;
+        NgayHetHan = ngayHetHan;
+        XacMinhLuc = xacMinhLuc;
     }
 
-    internal Result GanThongTinChuKySo()
+    internal static ThongTinChuKySo Tao(bool coChuKySo, bool hopLe, string nhaCungCap, bool nhaCungCapDuocTinTuong, DateTime ngayHetHan)
     {
-        throw new NotImplementedException();
+        return new ThongTinChuKySo(coChuKySo, hopLe, nhaCungCap, nhaCungCapDuocTinTuong, ngayHetHan, DateTime.UtcNow);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return CoChuKySo;
+        yield return HopLe;
+        yield return NhaCungCap;
+        yield return NhaCungCapDuocTinTuong;
+        yield return NgayHetHan;
+        yield return XacMinhLuc;
     }
 }

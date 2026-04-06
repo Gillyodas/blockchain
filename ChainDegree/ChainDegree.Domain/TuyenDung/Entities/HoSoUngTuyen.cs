@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ChainDegree.Domain.TuyenDung.Aggregates;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.Domain.TuyenDung.Enums;
+using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
@@ -16,8 +17,8 @@ public class HoSoUngTuyen
     public Guid SinhVienId { get; private set; }
     public DateTime ThoiGianUngTuyen { get; private set; }
     public TrangThaiUngTuyen TrangThaiUngTuyenHienTai { get; private set; }
-    public DateTime ThoiGianCapNhat { get; private set; } = DateTime.MinValue;
-    public DateTime ThoiGianXoa { get; private set; } = DateTime.MinValue;
+    public DateTime? ThoiGianCapNhat { get; private set; }
+    public DateTime? ThoiGianXoa { get; private set; }
 
     public IReadOnlyCollection<BangCapUngTuyen> BangCapUngTuyens => _bangCapUngTuyens.AsReadOnly();
 
@@ -78,6 +79,16 @@ public class HoSoUngTuyen
             ThoiGianCapNhat = DateTime.UtcNow;
         }
 
+        return Result.Success();
+    }
+
+    public Result ThuHoiUngTuyen()
+    {
+        if (TrangThaiUngTuyenHienTai != TrangThaiUngTuyen.ChoXem)
+            return Result.Failure(HoSoUngTuyenError.HoSoKhongTheThuhoi);
+
+        TrangThaiUngTuyenHienTai = TrangThaiUngTuyen.DaThuHoi;
+        ThoiGianCapNhat = DateTime.UtcNow;
         return Result.Success();
     }
 

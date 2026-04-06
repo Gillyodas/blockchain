@@ -5,8 +5,11 @@ using ControlHub.SharedKernel.Common.Errors;
 
 namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
 {
-    public class CoSoDaoTaoError
+    public static class CoSoDaoTaoError
     {
+        public static readonly Error TenSinhVienTrong =
+            Error.Validation("CoSoDaoTao.TenSinhVienTrong", "Tên sinh viên không được để trống");
+
         public static readonly Error SaiDinhDangCCCD =
             Error.Validation("CoSoDaoTao.SaiDinhDangCCCD", "Sai định dạng CCCD");
 
@@ -22,5 +25,8 @@ namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
 
         public static readonly Error ThieuQuyetDinhThanhLapTruong =
             Error.Validation("CoSoDaoTao.ThieuQuyetDinhThanhLapTruong", "Thiếu quyết định thành lập trường");
+
+        public static readonly Error SinhVienDaCoBangCapCungLoaiVaLinhVuc =
+            Error.Conflict("CoSoDaoTao.SinhVienDaCoBangCapCungLoaiVaLinhVuc", "Sinh viên đã có bằng cấp cùng loại và cùng lĩnh vực đang hiệu lực.");
     }
 }

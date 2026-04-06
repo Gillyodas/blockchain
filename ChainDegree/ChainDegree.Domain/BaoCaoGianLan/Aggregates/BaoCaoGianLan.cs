@@ -11,6 +11,7 @@ public class BaoCaoGianLan : AggregateRoot
     public Guid Id { get; private set; }
     public Guid BangCapId { get; private set; }
     public Guid NguoiBaoCaoId { get; private set; }
+    public Guid CoSoDaoTaoId { get; private set; }
     public LoaiNguoiBaoCao LoaiNguoiBaoCao { get; private set; }
     public LyDoBaoCaoGianLan LyDo { get; private set; }
     public string? GhiChu { get; private set; }
@@ -18,12 +19,13 @@ public class BaoCaoGianLan : AggregateRoot
     public DateTime ThoiGianBaoCao { get; private set; }
     public DateTime? ThoiGianCapNhat { get; private set; }
 
-    private BaoCaoGianLan(Guid id, Guid bangCapId, Guid nguoiBaoCaoId,
+    private BaoCaoGianLan(Guid id, Guid bangCapId, Guid nguoiBaoCaoId, Guid coSoDaoTaoId,
         LoaiNguoiBaoCao loaiNguoiBaoCao, LyDoBaoCaoGianLan lyDo, string? ghiChu)
     {
         Id = id;
         BangCapId = bangCapId;
         NguoiBaoCaoId = nguoiBaoCaoId;
+        CoSoDaoTaoId = coSoDaoTaoId;
         LoaiNguoiBaoCao = loaiNguoiBaoCao;
         LyDo = lyDo;
         GhiChu = ghiChu;
@@ -35,6 +37,7 @@ public class BaoCaoGianLan : AggregateRoot
         Guid bangCapId,
         Guid nguoiBaoCaoId,
         LoaiNguoiBaoCao loaiNguoiBaoCao,
+        Guid coSoDaoTaoId,
         LyDoBaoCaoGianLan lyDo,
         string? ghiChu)
     {
@@ -48,7 +51,7 @@ public class BaoCaoGianLan : AggregateRoot
             return Result<BaoCaoGianLan>.Failure(BaoCaoGianLanError.LyDoKhacCanGhiChu);
 
         return Result<BaoCaoGianLan>.Success(
-            new BaoCaoGianLan(Guid.NewGuid(), bangCapId, nguoiBaoCaoId, loaiNguoiBaoCao, lyDo, ghiChu));
+            new BaoCaoGianLan(Guid.NewGuid(), bangCapId, nguoiBaoCaoId, coSoDaoTaoId, loaiNguoiBaoCao, lyDo, ghiChu));
     }
 
     public Result TiepNhan()
@@ -68,7 +71,7 @@ public class BaoCaoGianLan : AggregateRoot
 
         TrangThai = TrangThaiBaoCao.DaXuLy;
         ThoiGianCapNhat = DateTime.UtcNow;
-        RaiseDomainEvent(new GianLanXacNhanDomainEvent(Id, BangCapId));
+        RaiseDomainEvent(new GianLanXacNhanDomainEvent(Id, BangCapId, CoSoDaoTaoId));
         return Result.Success();
     }
 

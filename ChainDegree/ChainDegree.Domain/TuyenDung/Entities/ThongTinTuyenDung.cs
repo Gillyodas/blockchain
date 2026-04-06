@@ -1,16 +1,8 @@
 using System;
-using ChainDegree.Domain.TuyenDung.Aggregates;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
-
-public class ThongTinTuyenDungError
-{
-    public static readonly Error ViTriKhongDuocTrong = Error.Validation("TuyenDung.ViTriKhongDuocTrong", "Vị trí tuyển dụng không được để trống.");
-    public static readonly Error MoTaKhongDuocTrong = Error.Validation("TuyenDung.MoTaKhongDuocTrong", "Mô tả không được để trống.");
-    public static readonly Error HanUngTuyenKhongHopLe = Error.Validation("TuyenDung.HanUngTuyenKhongHopLe", "Hạn ứng tuyển không hợp lệ.");
-}
 
 public class ThongTinTuyenDung
 {
@@ -21,10 +13,10 @@ public class ThongTinTuyenDung
     public DateTime ThoiHanUngTuyen { get; private set; }
     public Guid NhaTuyenDungId { get; private set; }
     public DateTime ThoiGianTao { get; private set; }
-    public DateTime ThoiGianCapNhat { get; private set; } = DateTime.MinValue;
-    public DateTime ThoiGianXoa { get; private set; } = DateTime.MinValue;
+    public DateTime? ThoiGianCapNhat { get; private set; }
+    public DateTime? ThoiGianXoa { get; private set; }
 
-    private ThongTinTuyenDung(Guid id, string ten, string moTa, Guid linhVucId, DateTime thoiHanUngTuyen, Guid nhaTuyenDungId,DateTime thoiGianTao)
+    private ThongTinTuyenDung(Guid id, string ten, string moTa, Guid linhVucId, DateTime thoiHanUngTuyen, Guid nhaTuyenDungId, DateTime thoiGianTao)
     {
         Id = id;
         Ten = ten;
@@ -34,6 +26,7 @@ public class ThongTinTuyenDung
         NhaTuyenDungId = nhaTuyenDungId;
         ThoiGianTao = thoiGianTao;
     }
+
     internal static Result<ThongTinTuyenDung> Create(
         string ten,
         string moTa,
@@ -75,9 +68,10 @@ public class ThongTinTuyenDung
         return Result.Success();
     }
 
-    public void XoaTTTD()
+    public Result XoaTTTD()
     {
         ThoiGianXoa = DateTime.UtcNow;
         ThoiGianCapNhat = DateTime.UtcNow;
+        return Result.Success();
     }
 }

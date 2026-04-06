@@ -1,16 +1,13 @@
 using System;
-using ChainDegree.Domain.TuyenDung.Aggregates;
-using ControlHub.SharedKernel.Common.Errors;
+using System.Collections.Generic;
+using ChainDegree.Domain.TuyenDung.Enums;
+using ChainDegree.SharedKernel.TuyenDung;
+using ControlHub.Domain.SharedKernel;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.ValueObjects;
 
-public class GiayPhepError
-{
-    public static readonly Error DuongDanTrong = Error.Validation("GiayPhep.DuongDanTrong", "Đường dẫn lưu trữ giấy phép không được để trống.");
-}
-
-public class GiayPhepNhaTuyenDung
+public class GiayPhepNhaTuyenDung : ValueObject
 {
     public string DuongDanLuuTru { get; private set; }
     public KieuGiayPhepNTD KieuGiayPhep { get; private set; }
@@ -18,18 +15,33 @@ public class GiayPhepNhaTuyenDung
     public DateTime? ThoiGianDuocXacMinh { get; private set; }
     public Guid? XacMinhBoiAdminId { get; private set; }
 
-    private GiayPhepNhaTuyenDung(string duongDanLuuTru, KieuGiayPhepNTD kieuGiayPhep, DateTime thoiGianTaiLen)
+    private GiayPhepNhaTuyenDung(string duongDanLuuTru, KieuGiayPhepNTD kieuGiayPhep, DateTime thoiGianTaiLen, DateTime? thoiGianDuocXacMinh, Guid? xacMinhBoiAdminId)
     {
         DuongDanLuuTru = duongDanLuuTru;
         KieuGiayPhep = kieuGiayPhep;
         ThoiGianTaiLen = thoiGianTaiLen;
+        ThoiGianDuocXacMinh = thoiGianDuocXacMinh;
+        XacMinhBoiAdminId = xacMinhBoiAdminId;
     }
 
     public static Result<GiayPhepNhaTuyenDung> Create(string duongDanLuuTru, KieuGiayPhepNTD kieuGiayPhep)
     {
         if (string.IsNullOrWhiteSpace(duongDanLuuTru))
-            return Result<GiayPhepNhaTuyenDung>.Failure(GiayPhepError.DuongDanTrong);
+            return Result<GiayPhepNhaTuyenDung>.Failure(TuyenDungError.DuongDanGiayPhepTrong);
 
-        return Result<GiayPhepNhaTuyenDung>.Success(new GiayPhepNhaTuyenDung(duongDanLuuTru, kieuGiayPhep, DateTime.UtcNow));
+        return Result<GiayPhepNhaTuyenDung>.Success(
+            new GiayPhepNhaTuyenDung(duongDanLuuTru, kieuGiayPhep, DateTime.UtcNow, null, null));
+    }
+
+    public GiayPhepNhaTuyenDung DanhDauDaXacMinh(Guid adminId)
+    {
+        return new GiayPhepNhaTuyenDung(DuongDanLuuTru, KieuGiayPhep, ThoiGianTaiLen, DateTime.UtcNow, adminId);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return DuongDanLuuTru;
+        yield return KieuGiayPhep;
+        yield return ThoiGianTaiLen;
     }
 }

@@ -5,7 +5,7 @@ using ControlHub.SharedKernel.Common.Errors;
 
 namespace ChainDegree.SharedKernel.QuanLyToChuc;
 
-public class GiayPhepCSDTError
+public static class GiayPhepCSDTError
 {
     public static readonly Error GiayPhepCSDTHetHan =
         Error.Validation("QuanLyToChuc.GiayPhepCSDTHetHan", "Giấy phép đã hết hạn");
@@ -18,4 +18,7 @@ public class GiayPhepCSDTError
 
     public static readonly Error NhaCungCapChuKySoKhongDuocTinTuong =
         Error.Validation("QuanLyToChuc.NhaCungCapChuKySoKhongDuocTinTuong", "Nhà cung cấp chữ ký số không được tin tưởng");
+
+    public static readonly Error ChiDuocTaiLenLaiKhiBiTuChoi =
+        Error.Validation("QuanLyToChuc.ChiDuocTaiLenLaiKhiBiTuChoi", "Chỉ được tải lên lại giấy phép khi trạng thái là Từ chối");
 }

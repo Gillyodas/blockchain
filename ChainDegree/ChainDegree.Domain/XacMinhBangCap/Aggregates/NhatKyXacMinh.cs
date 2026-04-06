@@ -1,5 +1,7 @@
 using System;
 using ChainDegree.Domain.XacMinhBangCap.Enums;
+using ChainDegree.SharedKernel.XacMinhBangCap;
+using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.XacMinhBangCap.Aggregates
 {
@@ -12,26 +14,27 @@ namespace ChainDegree.Domain.XacMinhBangCap.Aggregates
         public string MaBamXacMinh { get; private set; }
         public KetQuaXacMinh KetQuaXacMinh { get; private set; }
 
-        protected NhatKyXacMinh() { }
+        protected NhatKyXacMinh() { MaBamXacMinh = null!; }
 
         private NhatKyXacMinh(Guid bangCapId, string maBamXacMinh, KetQuaXacMinh ketQua, Guid? nhaTuyenDungId)
         {
-            if (bangCapId == Guid.Empty)
-                throw new ArgumentException("BangCapId không được để trống.");
-            if (string.IsNullOrWhiteSpace(maBamXacMinh))
-                throw new ArgumentException("MaBamXacMinh không được để trống.");
-
             Id = Guid.NewGuid();
             BangCapId = bangCapId;
             MaBamXacMinh = maBamXacMinh;
             KetQuaXacMinh = ketQua;
             NhaTuyenDungId = nhaTuyenDungId;
-            ThoiGianXacMinh = DateTime.UtcNow; 
+            ThoiGianXacMinh = DateTime.UtcNow;
         }
 
-        public static NhatKyXacMinh GhiNhan(Guid bangCapId, string maBamXacMinh, KetQuaXacMinh ketQua, Guid? nhaTuyenDungId = null)
+        public static Result<NhatKyXacMinh> GhiNhan(Guid bangCapId, string maBamXacMinh, KetQuaXacMinh ketQua, Guid? nhaTuyenDungId = null)
         {
-            return new NhatKyXacMinh(bangCapId, maBamXacMinh, ketQua, nhaTuyenDungId);
+            if (bangCapId == Guid.Empty)
+                return Result<NhatKyXacMinh>.Failure(XacMinhBangCapError.BangCapIdKhongHopLe);
+
+            if (string.IsNullOrWhiteSpace(maBamXacMinh))
+                return Result<NhatKyXacMinh>.Failure(XacMinhBangCapError.MaBamXacMinhTrong);
+
+            return Result<NhatKyXacMinh>.Success(new NhatKyXacMinh(bangCapId, maBamXacMinh, ketQua, nhaTuyenDungId));
         }
     }
 }

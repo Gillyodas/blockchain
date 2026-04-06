@@ -7,7 +7,7 @@ namespace ChainDegree.Domain.QuanLyBangCap.Enums;
 public enum LyDoThuHoi
 {
     ViPhamHocThuat = 0,
-    ViPhanDaoDuc = 1,
+    ViPhamDaoDuc = 1,
     BangGia = 2,
     GianLanXacNhan = 3,
     ThayDoiQuyDinh = 4,

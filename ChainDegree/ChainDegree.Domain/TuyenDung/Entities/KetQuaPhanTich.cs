@@ -1,5 +1,5 @@
 using System;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
@@ -23,7 +23,7 @@ public class KetQuaPhanTich
         ThoiGianPhanTich = thoiGianPhanTich;
     }
 
-    internal static Result<KetQuaPhanTich> Create(Guid thongTinTuyenDungId, Guid hoSoUngTuyenId, double phanTramPhuHop, string ketLuan)
+    public static Result<KetQuaPhanTich> Create(Guid thongTinTuyenDungId, Guid hoSoUngTuyenId, double phanTramPhuHop, string ketLuan)
     {
         if (phanTramPhuHop < 0 || phanTramPhuHop > 100)
             return Result<KetQuaPhanTich>.Failure(KetQuaPhanTichError.PhanTramPhuHopKhongHopLe);

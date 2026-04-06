@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
 using ChainDegree.Domain.TuyenDung.Entities;
+using ChainDegree.Domain.TuyenDung.Enums;
 using ChainDegree.Domain.TuyenDung.ValueObjects;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Aggregates;
@@ -21,11 +22,11 @@ public class NhaTuyenDung
     public Guid TaiKhoanId { get; private set; }
     public Guid YeuCauDangKyId { get; private set; }
     public DateTime ThoiGianTao { get; private set; }
-    public DateTime ThoiGianCapNhat { get; private set; } = DateTime.MinValue;
-    public DateTime ThoiGianXoa { get; private set; } = DateTime.MinValue;
+    public DateTime? ThoiGianCapNhat { get; private set; }
+    public DateTime? ThoiGianXoa { get; private set; }
     public HangUyTin HangUyTin { get; private set; }
 
-    private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId DateTime thoiGianTao,
+    private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, DateTime thoiGianTao)
     {
         Id = id; 
         Ten = ten; 
@@ -36,12 +37,12 @@ public class NhaTuyenDung
         ThoiGianTao = thoiGianTao;
     }
 
-    internal static Result<NhaTuyenDung> Create(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId)
+    public static Result<NhaTuyenDung> Create(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId)
     {
         if (string.IsNullOrWhiteSpace(ten))
             return Result<NhaTuyenDung>.Failure(TuyenDungError.TenNhaTuyenDungTrong);
 
-        return Result<NhaTuyenDung>.Success(new NhaTuyenDung(id, ten, diaChi, diaChiViNhaTuyenDung, taiKhoanId, yeuCauDangKyId,DateTime.UtcNow,                 ));
+        return Result<NhaTuyenDung>.Success(new NhaTuyenDung(id, ten, diaChi, diaChiViNhaTuyenDung, taiKhoanId, yeuCauDangKyId, DateTime.UtcNow));
     }
 
     public Result CapNhatThongTinNhaTuyenDung(string ten, string diaChi)
@@ -85,9 +86,9 @@ public class NhaTuyenDung
         if (tttd == null)
             return Result.Failure(TuyenDungError.TinTuyenDungKhongTonTai);
 
-        tttd.XoaTTTD();
-        ThoiGianCapNhat = DateTime.UtcNow;
-        return Result.Success();
+        var result = tttd.XoaTTTD();
+        if (result.IsSuccess) ThoiGianCapNhat = DateTime.UtcNow;
+        return result;
     }
 
     public Result ThemGiayPhep(string duongDan, KieuGiayPhepNTD kieu)

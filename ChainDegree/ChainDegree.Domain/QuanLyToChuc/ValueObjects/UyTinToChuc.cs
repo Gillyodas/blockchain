@@ -9,6 +9,7 @@ namespace ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 public class UyTinToChuc : ValueObject
 {
     public int DiemUyTin { get; private set; }
+    public int SoLuongGiayPhep { get; private set; } = 0;
     public int SoLuongXacMinhHopLe { get; private set; } = 0;
     public int SoLuongBangCapBiBaoCaoGianLan { get; private set; } = 0;
     public int SoLuongBangCapThuHoi { get; private set; } = 0;
@@ -19,12 +20,14 @@ public class UyTinToChuc : ValueObject
 
     private UyTinToChuc(
     int diemUyTin,
+    int soLuongGiayPhep,
     int soLuongXacMinhHopLe,
     int soLuongBangCapBiBaoCaoGianLan,
     int soLuongBangCapThuHoi,
     int soLuongBangCapPhatHanh)
     {
         DiemUyTin = diemUyTin;
+        SoLuongGiayPhep = soLuongGiayPhep;
         SoLuongXacMinhHopLe = soLuongXacMinhHopLe;
         SoLuongBangCapBiBaoCaoGianLan = soLuongBangCapBiBaoCaoGianLan;
         SoLuongBangCapThuHoi = soLuongBangCapThuHoi;
@@ -34,13 +37,14 @@ public class UyTinToChuc : ValueObject
 
     public static UyTinToChuc KhoiTao(int soLuongGiayPhep)
     {
-        return new UyTinToChuc(soLuongGiayPhep * DIEM_SO_VOI_MOI_GIAY_PHEP, 0, 0, 0, 0);
+        return new UyTinToChuc(soLuongGiayPhep * DIEM_SO_VOI_MOI_GIAY_PHEP, soLuongGiayPhep, 0, 0, 0, 0);
     }
 
     public UyTinToChuc ThemGiayPhep()
     {
         return new UyTinToChuc(
             DiemUyTin + DIEM_SO_VOI_MOI_GIAY_PHEP,
+            SoLuongGiayPhep + 1,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi,
@@ -51,6 +55,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin + 1,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe + 1,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi,
@@ -61,6 +66,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin - 200,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan + 1,
             SoLuongBangCapThuHoi,
@@ -71,6 +77,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin + 2,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi,
@@ -81,6 +88,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin - 5,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi,
@@ -91,6 +99,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin - 5,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi + 1,
@@ -101,6 +110,7 @@ public class UyTinToChuc : ValueObject
     {
         return new UyTinToChuc(
             DiemUyTin - 200,
+            SoLuongGiayPhep,
             SoLuongXacMinhHopLe,
             SoLuongBangCapBiBaoCaoGianLan,
             SoLuongBangCapThuHoi + 1,
@@ -109,7 +119,8 @@ public class UyTinToChuc : ValueObject
 
     private void CapNhatHangUyTin()
     {
-        if (DiemUyTin < 100) Hang = HangUyTin.Dong;
+        if (SoLuongGiayPhep == 0) Hang = HangUyTin.ChuaCoGiayPhep;
+        else if (DiemUyTin < 100) Hang = HangUyTin.Dong;
         else if (DiemUyTin < 300) Hang = HangUyTin.Bac;
         else if (DiemUyTin < 500) Hang = HangUyTin.Vang;
         else Hang = HangUyTin.DaCoGiayPhep;
@@ -118,8 +129,11 @@ public class UyTinToChuc : ValueObject
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return DiemUyTin;
+        yield return SoLuongGiayPhep;
         yield return SoLuongXacMinhHopLe;
         yield return SoLuongBangCapBiBaoCaoGianLan;
+        yield return SoLuongBangCapThuHoi;
+        yield return SoLuongBangCapPhatHanh;
         yield return Hang;
     }
 }

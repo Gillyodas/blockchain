@@ -5,7 +5,7 @@ using ControlHub.SharedKernel.Common.Errors;
 
 namespace ChainDegree.SharedKernel.QuanLyBangCap.BangCap;
 
-public class BangCapError
+public static class BangCapError
 {
     public static readonly Error DiemKhongHopLe =
         Error.Validation("BangCap.DiemKhongHopLe", "Điểm không hợp lệ, phải lớn hơn hoặc bằng 0");

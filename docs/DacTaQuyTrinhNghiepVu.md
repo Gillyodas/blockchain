@@ -160,17 +160,13 @@ Sinh viên (Holder) **không tự đăng ký tài khoản**. Tài khoản đư�
 
 ### 3.3. Cập nhật thông tin sinh viên
 
-Issuer có thể cập nhật các trường: **Họ tên**, **Email**, **Số điện thoại** của sinh viên thuộc quyền quản lý của mình.
+Issuer có thể cập nhật các trường: **Họ tên**, **Email** của sinh viên. Số điện thoại được quản lý bởi ControlHub Identity, không thuộc domain ChainDegree.
 
-> Issuer chỉ cập nhật được thông tin SV mà Issuer đó quản lý. Không ảnh hưởng đến liên kết của SV với Issuer khác.
+> Domain method: `SinhVien.CapNhatThongTinSinhVien(ten, email)` — validate tên không trống, email đúng định dạng.
 
-### 3.4. Hủy liên kết sinh viên
+### ~~3.4. Hủy liên kết sinh viên~~ *(đã loại bỏ)*
 
-Issuer hủy liên kết quản lý với sinh viên. Sinh viên vẫn tồn tại trong hệ thống nếu còn liên kết với Issuer khác.
-
-> **Ràng buộc:** Không thể hủy liên kết nếu sinh viên đó còn bằng cấp đang hiệu lực do Issuer này cấp. Issuer phải thu hồi hoặc hủy toàn bộ bằng trước khi hủy liên kết.
-
-> **Trường hợp đặc biệt:** Nếu SV không còn liên kết với bất kỳ Issuer nào, tài khoản SV bị soft delete (cập nhật `ThoiGianXoa`, không thể đăng nhập). Bằng cấp đã thu hồi/hủy vẫn được giữ lại trong lịch sử.
+> **Quyết định thiết kế:** Domain không track explicit link CSDT↔SinhVien. Quan hệ tồn tại implicit qua `BangCap.CoSoDaoTaoCapId`. Issuer nhận dạng sinh viên bằng CCCD và có thể cấp bằng cho bất kỳ CCCD nào — không cần "liên kết" trước. Soft delete SinhVien nếu cần sẽ được xử lý ở Application layer dựa trên việc không còn bằng nào đang hoạt động.
 
 ---
 

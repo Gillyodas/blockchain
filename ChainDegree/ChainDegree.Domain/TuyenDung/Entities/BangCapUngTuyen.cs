@@ -1,5 +1,5 @@
 using System;
-using ControlHub.SharedKernel.Common.Errors;
+using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.TuyenDung.Entities;
@@ -19,7 +19,7 @@ public class BangCapUngTuyen
     internal static Result<BangCapUngTuyen> Create(Guid hoSoUngTuyenId, Guid bangCapId)
     {
         if (hoSoUngTuyenId == Guid.Empty || bangCapId == Guid.Empty)
-            return Result<BangCapUngTuyen>.Failure(BangCapError.BangCapKhongHopLe);
+            return Result<BangCapUngTuyen>.Failure(BangCapUngTuyenError.BangCapKhongHopLe);
 
         return Result<BangCapUngTuyen>.Success(new BangCapUngTuyen(hoSoUngTuyenId, bangCapId));
     }

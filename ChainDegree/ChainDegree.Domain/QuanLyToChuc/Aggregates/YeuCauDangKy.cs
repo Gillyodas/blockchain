@@ -4,22 +4,25 @@ using System.Linq;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
 using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ChainDegree.SharedKernel.QuanLyToChuc;
-using ControlHub.SharedKernel.Common.Errors;
+using ControlHub.Domain.SharedKernel;
 using ControlHub.SharedKernel.Results;
 
 namespace ChainDegree.Domain.QuanLyToChuc.Aggregates;
 
-public class YeuCauDangKy
+public class YeuCauDangKy : AggregateRoot
 {
     public Guid Id { get; private set; }
     public string TenToChuc { get; private set; }
     public Guid TaiKhoanId { get; private set; }
     public LoaiToChuc Loai { get; private set; }
     public TrangThaiYeuCauDangKy TrangThai { get; private set; }
+    public DateTime ThoiGianTao { get; private set; }
+    public DateTime? ThoiGianNop { get; private set; }
+    public DateTime? ThoiGianXetDuyet { get; private set; }
 
-    // Thêm các trường cho Admin xét duyệt
     public LyDoTuChoi? LyDo { get; private set; }
     public string? GhiChuTuChoi { get; private set; }
+    public string? GhiChuDuyet { get; private set; }
 
     private YeuCauDangKy(Guid id, string tenToChuc, LoaiToChuc loai, Guid tkId, TrangThaiYeuCauDangKy trangThai)
     {
@@ -28,9 +31,10 @@ public class YeuCauDangKy
         Loai = loai;
         TaiKhoanId = tkId;
         TrangThai = trangThai;
+        ThoiGianTao = DateTime.UtcNow;
     }
 
-    internal static Result<YeuCauDangKy> Create(string tenToChuc, LoaiToChuc loai, Guid taiKhoanId)
+    public static Result<YeuCauDangKy> Create(string tenToChuc, LoaiToChuc loai, Guid taiKhoanId)
     {
         if (string.IsNullOrWhiteSpace(tenToChuc))
             return Result<YeuCauDangKy>.Failure(QuanLyToChucError.TenToChucTrong);
@@ -93,7 +97,25 @@ public class YeuCauDangKy
                 return Result.Failure(QuanLyToChucError.ThieuGiayPhepBatBuocNTD);
         }
         TrangThai = TrangThaiYeuCauDangKy.DaGui;
+        ThoiGianNop = DateTime.UtcNow;
 
+        return Result.Success();
+    }
+
+    public Result TaiLenLaiGiayPhep(LoaiGiayPhepCSDT loai, string duongDanMoi)
+    {
+        if (TrangThai != TrangThaiYeuCauDangKy.DaGui)
+            return Result.Failure(QuanLyToChucError.HoSoKhongTheXetDuyet);
+
+        var giayPhep = _giayPhepCSDTs.FirstOrDefault(x => x.LoaiGiayPhep == loai && x.TrangThai == TrangThaiXacMinh.TuChoi);
+        if (giayPhep == null)
+            return Result.Failure(GiayPhepCSDTError.GiayPhepCSDTKhongHopLe);
+
+        var result = giayPhep.TaiLenLai(duongDanMoi);
+        if (result.IsFailure) return Result.Failure(result.Error);
+
+        _giayPhepCSDTs.Remove(giayPhep);
+        _giayPhepCSDTs.Add(result.Value);
         return Result.Success();
     }
 
@@ -109,6 +131,7 @@ public class YeuCauDangKy
         TrangThai = TrangThaiYeuCauDangKy.TuChoi;
         LyDo = lyDo;
         GhiChuTuChoi = ghiChu;
+        ThoiGianXetDuyet = DateTime.UtcNow;
 
         return Result.Success();
     }
@@ -120,9 +143,14 @@ public class YeuCauDangKy
             return Result.Failure(QuanLyToChucError.HoSoKhongTheXetDuyet);
 
         TrangThai = TrangThaiYeuCauDangKy.XacNhan;
-        GhiChuTuChoi = ghiChu;
+        GhiChuDuyet = ghiChu;
+        ThoiGianXetDuyet = DateTime.UtcNow;
 
-        // Lưu ý: Sau bước này hệ thống sẽ phát tín hiệu Event để tạo CoSoDaoTao/NhaTuyenDung
+        if (Loai == LoaiToChuc.Issuer)
+            RaiseDomainEvent(new Events.CoSoDaoTaoApprovedEvent(Id, TaiKhoanId, TenToChuc, _giayPhepCSDTs.ToList()));
+        else
+            RaiseDomainEvent(new Events.NhaTuyenDungApprovedEvent(Id, TaiKhoanId, TenToChuc, _giayPhepNTDs.ToList()));
+
         return Result.Success();
     }
 }
