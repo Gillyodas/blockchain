@@ -183,6 +183,11 @@ contracts/out/
 # Hardhat Ignition build-info (large compiled artifacts)
 contracts/ignition/deployments/**/build-info/
 
+# Office documents (internal drafts, not source of truth)
+*.docx
+*.xlsx
+*.pptx
+
 # Remix IDE artifacts
 .remix/
 remix-backup/
