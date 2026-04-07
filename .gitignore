@@ -1,38 +1,282 @@
-## [DO NET] - Các file build và rác của Visual Studio
-[Bb]in/
-[Oo]bj/
+# ==========================================
+# ChainDegree - .gitignore Configuration
+# ==========================================
+# Covers: .NET, Blockchain (Hyperledger Besu), Docker, Solidity, Database
+
+# ==========================================
+# .NET & C# Build Artifacts
+# ==========================================
+bin/
+obj/
 .vs/
-.user/
+.vscode/
 *.user
 *.suo
-*.userosscache
 *.sln.docstates
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.code-workspace
 
-## [DOCKER] - Chặn các file dữ liệu do Docker sinh ra
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.lock.json
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+
+# ==========================================
+# Hyperledger Besu & Blockchain
+# ==========================================
+# Docker volumes & state
 data/
-*/data/
+blockchain-data/
+besu-data/
+*.db
+*.leveldb
 
-## [LOGS] - Chặn các file log
-Logs/
+# Node data
+node1/data/
+node2/data/
+node3/data/
+node4/data/
+
+# Besu logs
+logs/
 *.log
 
-## [BLOCKCHAIN] - Chặn các file key và cấu hình riêng của Node
-*key
-*password
+# Smart Contract build artifacts
+build/
+dist/
+*.sol.json
+artifacts/
+cache/
+
+# Hardhat/Truffle artifacts (if you ever use these)
+contracts/artifacts/
+contracts/cache/
+contracts/typechain/
+
+# MetaMask & Wallet artifacts
+.metamask/
+wallet-seed.txt
+*.key
+*.pem
+private-key*
+
+# ==========================================
+# Database & SQL Server
+# ==========================================
+*.mdf
+*.ldf
+*.ndf
+App_Data/
+database.mdb
+*.db-journal
+
+# SQL Server backup files
+*.bak
+*.backup
+
+# ==========================================
+# Docker & Container
+# ==========================================
+docker-compose.override.yml
+.dockerignore
+
+# Docker build cache
+.docker/
+docker/cache/
+
+# Container volumes (don't commit mounted data)
+volumes/
+postgres_data/
+mysql_data/
+
+# ==========================================
+# Environment & Configuration
+# ==========================================
 .env
-.env.*
+.env.local
+.env.*.local
+appsettings.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+launchSettings.json
 
-## [APP SETTINGS] - Chặn các file chứa connection string thật
-ChainDegree/ChainDegree.API/appsettings.Development.json
-ChainDegree/ChainDegree.API/appsettings.Local.json
-ChainDegree/ChainDegree.API/appsettings.json
+# Configuration with secrets
+config/secrets/
+secrets/
+*.secrets.json
+.env.*.encrypted
 
-## [QDRANT] - Dữ liệu runtime của Qdrant
+# ==========================================
+# IDE & Editor Files
+# ==========================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.netbeans/
+
+# ==========================================
+# Claude Code
+# ==========================================
+.claude/
+
+# ==========================================
+# ML Models & Vector DB
+# ==========================================
+*.onnx
+*_vocab.txt
+ChainDegree/Models/
 qdrant_storage/
 
-## [ML MODELS] - File model nặng, tải lại bằng install script
-ChainDegree/Models/*
-!ChainDegree/Models/install_reranker.ps1
+# ==========================================
+# Local Logs & Data
+# ==========================================
+mentor_log.json
 
-## [CLAUDE] - Local settings
-.claude/
+# ==========================================
+# Hardhat Generated TypeScript Types
+# ==========================================
+contracts/types/
+
+# ==========================================
+# Project-Specific Artifacts
+# ==========================================
+# Blockchain deployment state
+deployments/contract-addresses.json
+contract-addresses.*.json
+deployed-contracts.json
+
+# Blockchain transaction hashes (for logging)
+tx-hashes.log
+deployment-log.txt
+
+# Solidity compilation
+contracts/bin/
+contracts/out/
+
+# Hardhat Ignition build-info (large compiled artifacts)
+contracts/ignition/deployments/**/build-info/
+
+# Remix IDE artifacts
+.remix/
+remix-backup/
+
+# ==========================================
+# Node.js (if using for blockchain tools)
+# ==========================================
+node_modules/
+npm-debug.log
+yarn-error.log
+.yarn/cache/
+.pnp.cjs
+
+# ==========================================
+# Python (if using for scripts)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv
+
+# ==========================================
+# Build & Dependency Output
+# ==========================================
+dist/
+build/
+coverage/
+.nyc_output/
+
+# ==========================================
+# OS & System Files
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# Temporary Files
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.#*
+\#*\#
+
+# ==========================================
+# Optional local development files
+# ==========================================
+# Local blockchain state snapshots (but track deployment scripts)
+*.snapshot
+blockchain-state-*.json
+
+# Local test data
+test-data/
+mock-data/
+
+# Performance profiling
+*.prof
+*.cpuprofile
+
+# ==========================================
+# IDE Plugins & Extensions
+# ==========================================
+.gradle/
+.m2/
+.ivy2/
+
+# ==========================================
+# Keep These (Patterns to NOT ignore)
+# ==========================================
+# Deployment scripts SHOULD be committed
+!contracts/migrations/
+!scripts/deploy*.sh
+!scripts/deploy*.ps1
+
+# Configuration templates SHOULD be committed
+!.env.example
+!appsettings.example.json
+
+# Docker Compose for blockchain SHOULD be committed
+!docker-compose.yml
+!docker-compose.*.yml
+
+# Smart contract source code SHOULD be committed
+!contracts/*.sol
+!contracts/src/

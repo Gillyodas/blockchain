@@ -59,14 +59,14 @@ ChainDegree là nền tảng quản lý và xác minh bằng cấp học thuật
 
 | Bước | Hành động | Kết quả / Ghi chú |
 |---|---|---|
-| 1 | Tổ chức điền thông tin hồ sơ: tên tổ chức, mã số trường (nếu có), địa chỉ, website, số điện thoại. | Form đăng ký được lưu tạm (draft). |
-| 2 | Tổ chức upload tối thiểu 2 giấy tờ bắt buộc (xem bảng 2.1.4). Hỗ trợ định dạng PDF có chữ ký số. | File được lưu vào storage. Bản ghi `GiayPhepCSDT` được tạo với `TrangThaiXacMinhGiayPhep = ChoXacMinh`. |
+| 1 | Tổ chức điền thông tin hồ sơ: **tên tổ chức** (bắt buộc), địa chỉ (bắt buộc), mã số trường (nếu có), website. Email và số điện thoại liên hệ tổ chức được lấy tự động từ tài khoản Account — chỉ cần cung cấp tường minh nếu tổ chức muốn dùng email/sdt **khác** với tài khoản (ví dụ: đăng ký qua hợp đồng hợp tác). | `YeuCauDangKy` được tạo với `TrangThai = Nhap`. |
+| 2 | Tổ chức upload tối thiểu 2 giấy tờ bắt buộc (xem bảng 2.1.5). Hỗ trợ định dạng PDF có chữ ký số. Mỗi giấy tờ cần kèm **ngày hết hiệu lực** của giấy phép (do domain `GiayPhepCSDT` yêu cầu `ThoiGianHetHan > hiện tại`). | File được lưu vào storage. Bản ghi `GiayPhepCSDT` được tạo với `TrangThaiXacMinhGiayPhep = ChoXacMinh`. |
 | 3 | **[Tự động]** Hệ thống chạy verify chữ ký số trên từng file PDF vừa upload (PKI verification). | `ThongTinChuKySo` được cập nhật: `CoChuKySo`, `HopLe`, `NhaCungCap`, `NhaCungCapDuocTinTuong`, `NgayHetHan`, `XacMinhLuc`. |
-| 4 | **[Tự động]** Hệ thống cập nhật `TrangThaiXacMinhGiayPhep` của `GiayPhepCSDT` theo kết quả verify. | Xem chi tiết tại mục 2.1.3. |
-| 5 | Tổ chức xác nhận nộp hồ sơ. | Trạng thái `YeuCauDangKy` chuyển thành `DaGui`. Admin nhận thông báo. |
+| 4 | **[Tự động]** Hệ thống cập nhật `TrangThaiXacMinhGiayPhep` của `GiayPhepCSDT` theo kết quả verify. | Xem chi tiết tại mục 2.1.4. |
+| 5 | Tổ chức xác nhận nộp hồ sơ. | Trạng thái `YeuCauDangKy` chuyển thành `DaGui`. `ThoiGianNop` được ghi nhận. Admin nhận thông báo. |
 | 6 | Admin xem xét hồ sơ: thông tin tổ chức + kết quả verify chữ ký số từng giấy tờ. | Admin có thể xem chi tiết `ThongTinChuKySo` của từng file. |
-| 7a | **[Admin DUYỆT]** Admin nhấn Phê duyệt + ghi ghi chú (tuỳ chọn). | Hệ thống tạo `CoSoDaoTao` + gắn Role Issuer. Điểm `UyTinToChuc` khởi tạo = 100. Tổ chức nhận email thông báo. `TrangThaiYeuCauDangKy = XacNhan`. |
-| 7b | **[Admin TỪ CHỐI]** Admin nhấn Từ chối + chọn `LyDoTuChoi` (enum) + ghi `GhiChuTuChoi` (bắt buộc). | `TrangThaiYeuCauDangKy = TuChoi`. Tổ chức nhận email kèm lý do. |
+| 7a | **[Admin DUYỆT]** Admin nhấn Phê duyệt + ghi ghi chú (tuỳ chọn). | Hệ thống raise `CoSoDaoTaoApprovedEvent` → Application handler tạo `CoSoDaoTao` + gắn Role Issuer. `UyTinToChuc` khởi tạo = `50 × số giấy phép đã nộp` (tối thiểu 100 với 2 giấy bắt buộc). `TrangThaiYeuCauDangKy = XacNhan`. `ThoiGianXetDuyet` được ghi nhận. Tổ chức nhận email thông báo. |
+| 7b | **[Admin TỪ CHỐI]** Admin nhấn Từ chối + chọn `LyDoTuChoi` (enum) + ghi `GhiChuTuChoi` (bắt buộc). Nếu `LyDoTuChoi = Khac` thì `GhiChuTuChoi` không được để trống. | `TrangThaiYeuCauDangKy = TuChoi`. `ThoiGianXetDuyet` được ghi nhận. Tổ chức nhận email kèm lý do. |
 
 #### 2.1.3. Xử lý sau khi bị từ chối
 
@@ -107,11 +107,11 @@ ChainDegree là nền tảng quản lý và xác minh bằng cấp học thuật
 
 | Bước | Hành động | Kết quả / Ghi chú |
 |---|---|---|
-| 1 | Doanh nghiệp điền thông tin: tên công ty, mã số thuế, địa chỉ, lĩnh vực hoạt động. | Form draft. |
-| 2 | Upload tối thiểu 1 giấy tờ bắt buộc (xem bảng 2.2.4). | Bản ghi `GiayPhepNhaTuyenDung` được tạo, `TrangThaiXacMinhGiayPhep = ChoXacMinh`. |
+| 1 | Doanh nghiệp điền thông tin: **tên công ty** (bắt buộc), địa chỉ (bắt buộc), lĩnh vực hoạt động (bắt buộc). Email và số điện thoại được lấy tự động từ tài khoản Account — chỉ cần cung cấp tường minh nếu tổ chức muốn dùng thông tin **khác** với tài khoản. | `YeuCauDangKy` được tạo với `TrangThai = Nhap`. |
+| 2 | Upload tối thiểu 1 giấy tờ bắt buộc (xem bảng 2.2.4). | Bản ghi `GiayPhepNhaTuyenDung` được tạo, `TrangThaiXacMinhGiayPhep = ChoXacMinh`. Không yêu cầu ngày hết hiệu lực (khác CSDT). |
 | 3 | **[Tự động]** Hệ thống verify chữ ký số. | `ThongTinChuKySo` được cập nhật (cùng cơ chế với `GiayPhepCSDT`). |
-| 4 | Doanh nghiệp xác nhận nộp hồ sơ. | `TrangThaiYeuCauDangKy = DaGui`. Admin nhận thông báo. |
-| 5 | Admin xét duyệt. | Tương tự bước 6–7 của Issuer. Khi duyệt: tạo `NhaTuyenDung` + gắn Role Verifier. |
+| 4 | Doanh nghiệp xác nhận nộp hồ sơ. | `TrangThaiYeuCauDangKy = DaGui`. `ThoiGianNop` được ghi nhận. Admin nhận thông báo. |
+| 5 | Admin xét duyệt. | Tương tự bước 6–7 của Issuer. Khi duyệt: raise `NhaTuyenDungApprovedEvent` → Application handler tạo `NhaTuyenDung` + gắn Role Verifier. `ThoiGianXetDuyet` được ghi nhận. |
 
 #### 2.2.3. Điểm khác biệt giữa Issuer và Verifier
 
@@ -142,16 +142,16 @@ Sinh viên (Holder) **không tự đăng ký tài khoản**. Tài khoản đư�
 | Bước | Hành động | Kết quả |
 |---|---|---|
 | 1 | Issuer vào **Quản lý Sinh viên** → **Thêm sinh viên**. | Form nhập liệu hiển thị. |
-| 2 | Nhập thông tin: Họ tên, CCCD, Email, Số điện thoại. | Dữ liệu được validate. |
-| 3 | **[Tự động]** Hệ thống kiểm tra CCCD đã tồn tại chưa. | Nếu đã tồn tại → liên kết SV hiện tại với Issuer này. Nếu chưa → tạo SV mới + tài khoản ControlHub. |
+| 2 | Nhập thông tin: Họ tên, CCCD, Email. Domain `SinhVien` lưu `Ten`, `CCCD`, `Email`, `DiaChiViSinhVien` (ví blockchain do hệ thống cấp). Số điện thoại thu thập riêng cho tài khoản ControlHub Identity, không lưu trong entity `SinhVien`. | Dữ liệu được validate: CCCD đúng định dạng 12 số, email đúng định dạng. |
+| 3 | **[Tự động]** Hệ thống kiểm tra CCCD đã tồn tại chưa. | Nếu đã tồn tại → trả về `{ loai: "LienKet" }`, không tạo bản ghi mới. Nếu chưa → tạo `SinhVien` + tài khoản ControlHub → trả về `{ loai: "TaoMoi" }`. |
 | 4 | Sinh viên nhận email thông báo. | Nếu SV mới: nhận mật khẩu tạm, đổi mật khẩu lần đầu. Nếu SV đã tồn tại: nhận thông báo liên kết Issuer mới. |
 
 ### 3.2. Nhập hàng loạt từ Excel
 
 1. Issuer tải template Excel mẫu từ hệ thống.
-2. Điền dữ liệu: **Họ tên**, **CCCD**, **Email**, **Số điện thoại**.
+2. Điền dữ liệu: **Họ tên**, **CCCD**, **Email**. Số điện thoại có thể điền thêm — dùng cho tài khoản ControlHub, không lưu vào `SinhVien` domain.
 3. Upload file. Hệ thống validate từng dòng:
-   - CCCD không để trống, đúng định dạng.
+   - CCCD không để trống, đúng định dạng 12 số (bắt đầu bằng `0`).
    - Email đúng định dạng.
    - Họ tên không để trống.
    - Nếu CCCD đã tồn tại → đánh dấu "liên kết" thay vì "tạo mới".
@@ -422,13 +422,15 @@ Kết quả AI chỉ mang tính tham khảo — quyết định cuối thuộc v
 
 ### 12.2. Vòng đời trạng thái BangCap
 
+> **Lưu ý:** Tên enum trong domain code là `ChuaXacNhan` (không phải `Nhap`).
+
 | TrangThaiBangCap | TrangThaiBlockchain | Mô tả |
 |---|---|---|
-| `Nhap` | `ChoDuyet` | Bằng vừa tạo, đang chờ ghi blockchain. |
+| `ChuaXacNhan` | `ChoDuyet` | Bằng vừa tạo, đang chờ ghi blockchain. |
 | `DaXacNhan` | `XacNhan` | Bằng đã lên blockchain, đang hiệu lực. |
 | `DaThuHoi` | `XacNhan` | Bằng bị thu hồi trên blockchain. Có thể khôi phục. |
 | `DaHuy` | `XacNhan` hoặc `N/A` | Bằng bị hủy vĩnh viễn. Không khôi phục. |
-| `Nhap` | `ThatBai` | Ghi blockchain thất bại. Cần retry. |
+| `ChuaXacNhan` | `ThatBai` | Ghi blockchain thất bại. Cần retry. |
 
 ### 12.3. Vòng đời TrangThaiXacMinhGiayPhep
 
@@ -443,13 +445,12 @@ Kết quả AI chỉ mang tính tham khảo — quyết định cuối thuộc v
 
 | Sự kiện | Issuer | Verifier |
 |---|---|---|
-| Khởi tạo khi được Admin phê duyệt | +100 | +100 |
-| Upload giấy tờ có chữ ký số hợp lệ (CA tin cậy) | +50/tờ | +50/tờ |
-| Mỗi bằng cấp được cấp thành công | +2 | N/A |
+| Khởi tạo khi được Admin phê duyệt | `+50 × số giấy phép đã nộp` (tối thiểu 100 với 2 giấy bắt buộc) | `+50 × số giấy phép đã nộp` (tối thiểu 50 với 1 giấy bắt buộc) |
+| Mỗi bằng cấp được cấp thành công lên blockchain | +2 | N/A |
 | Mỗi lần NTD xác minh bằng hợp lệ | +1 | N/A |
 | Hủy bằng do lỗi nhập liệu / trùng lặp | −5 | N/A |
 | Thu hồi bằng do thay đổi quy định | −5 | N/A |
-| Bằng bị xác nhận gian lận | **−200** | N/A |
+| Bằng bị xác nhận gian lận (Admin `XacNhanGianLan`) | **−200** | N/A |
 
 > UyTin là tín hiệu tin cậy: AI sử dụng để phân tích mức độ tin cậy của bằng cấp, NTD tham khảo để đánh giá CSDT. UyTin **không** ảnh hưởng đến quyền cấp bằng hay trạng thái hoạt động của tổ chức.
 
@@ -469,5 +470,42 @@ Kết quả AI chỉ mang tính tham khảo — quyết định cuối thuộc v
 - **Bất biến của hash:** `credentialHash` không được phép thay đổi sau khi tạo. Muốn sửa → thu hồi bản cũ + cấp lại bản mới (hash mới).
 - **Không xóa cứng bằng cấp:** Bằng chỉ được soft delete hoặc thu hồi. Dữ liệu lịch sử luôn được giữ lại.
 - **Phân quyền smart contract:** `authorizedIssuers[msg.sender]` — chỉ Issuer đã whitelist mới gọi được `issueCredential()` / `revokeCredential()`.
-- **Sinh viên thuộc nhiều CSDT:** Nhận biết qua CCCD. Hủy liên kết chỉ ảnh hưởng quan hệ CSDT-SV đó, không ảnh hưởng CSDT khác.
+- **Sinh viên thuộc nhiều CSDT:** Nhận biết qua CCCD. Không có explicit link CSDT↔SinhVien — quan hệ tồn tại implicit qua `BangCap.CoSoDaoTaoCapId`. Mỗi CSDT nhận dạng sinh viên bằng CCCD và có thể cấp bằng độc lập.
 - **Admin chỉ duyệt và cấp quyền:** Admin không tạm khóa tổ chức. Không có trạng thái Suspended.
+
+---
+
+## 13. Ghi chú — Spec vs Codebase (cần xem xét triển khai)
+
+Mục này ghi lại các điểm **đặc tả thiết kế** chưa được phản ánh đầy đủ trong domain code hiện tại. Nhóm cần quyết định xem các mục này có nằm trong phạm vi sprint hiện tại không.
+
+### 13.1. Domain code thiếu so với spec
+
+| # | Vấn đề | Vị trí | Ghi chú |
+|---|--------|--------|---------|
+| 1 | `LyDoTuChoi` chỉ có 4 giá trị trong code (`GiayToKhongHopLe`, `ThongTinKhongChinhXac`, `KhongDuGiayTo`, `Khac`), trong khi class diagram thiết kế 7 giá trị | `Domain/QuanLyToChuc/Enums/LyDoTuChoi.cs` | Cần bổ sung 3 giá trị: `ThongTinToChucKhongKhopVoiGiayTo`, `GiayPhepHetHan`, `ToChucDangTrongDanhSachDen` |
+| 2 | `NhaTuyenDung` không có `UyTinToChuc` ValueObject — chỉ có `HangUyTin` enum thuần | `Domain/TuyenDung/Aggregates/NhaTuyenDung.cs` | `UyTinToChuc` với đầy đủ điểm số và lịch sử cần được thêm vào, tương tự như `CoSoDaoTao` |
+| 3 | `NhaTuyenDung.BaoCaoGianLanBangCap()` nhận `string lyDo` thay vì `LyDoBaoCaoGianLan` enum; method không tạo aggregate `BaoCaoGianLan` mà chỉ raise event | `Domain/TuyenDung/Aggregates/NhaTuyenDung.cs` | Cần sửa kiểu tham số và logic tạo aggregate |
+| 4 | `NhaTuyenDung.CapNhatThongTinNhaTuyenDung(ten, diaChi)` chỉ nhận 2 tham số — không lưu `sdt`, `email`, `website`, `logo`, `moTa`, `maSoThue` | `Domain/TuyenDung/Aggregates/NhaTuyenDung.cs` | Cần quyết định: các trường này có thuộc domain không hay nằm ở Application/Infrastructure layer? |
+| 5 | `TaiLenLaiGiayPhep` chỉ được implement cho CSDT (`GiayPhepCSDT`), không có cho NTD (`GiayPhepNhaTuyenDung`) | `Domain/QuanLyToChuc/Aggregates/YeuCauDangKy.cs` | Nếu NTD cần nộp lại giấy phép sau khi bị từ chối, cần bổ sung method tương ứng |
+| 6 | `YeuCauDangKy` domain không lưu `Email`, `SDT`, `DiaChi` của tổ chức — các trường này có trong ERD nhưng không có trong aggregate | `Domain/QuanLyToChuc/Aggregates/YeuCauDangKy.cs` | Các trường này có thể lấy từ tài khoản ControlHub Identity. Cần làm rõ có cần lưu redundant trong `YeuCauDangKy` không |
+
+### 13.2. ERD/Diagram chưa phản ánh đúng codebase
+
+| # | Vấn đề | Vị trí | Ghi chú |
+|---|--------|--------|---------|
+| 1 | ERD có bảng `CSDTSinhVien` (junction table explicit) — đã loại bỏ theo quyết định thiết kế | `docs/diagram/erd.mmd` | Xóa bảng này khỏi ERD |
+| 2 | ERD `BaoCaoGianLan.LyDo` kiểu `string` — domain dùng `LyDoBaoCaoGianLan` enum | `docs/diagram/erd.mmd` | Cập nhật kiểu sang enum |
+| 3 | ERD `YeuCauDangKy` có các cột `Email`, `SDT`, `DiaChi` — domain code không lưu | `docs/diagram/erd.mmd` | Quyết định bỏ hay giữ tùy theo item 13.1.6 |
+| 4 | ERD `YeuCauDangKy` thiếu `GhiChuDuyet`, `ThoiGianNop`, `ThoiGianXetDuyet` | `docs/diagram/erd.mmd` | Bổ sung vào ERD |
+| 5 | Class diagram `CoSoDaoTao` vẫn có method `HuyLienKetSinhVien()` — đã loại bỏ | `docs/diagram/class.mmd` | Xóa method này |
+| 6 | Class diagram `SinhVien` có `TaoMaQR()`, `ChiaSeDuongDan()` — đây là presentation concern, không phải domain behavior | `docs/diagram/class.mmd` | Xem xét chuyển sang Application/API layer |
+
+### 13.3. Các tính năng trong spec chưa có trong codebase
+
+| # | Tính năng | Ghi chú |
+|---|-----------|---------|
+| 1 | **Ký số giấy phép (ChuKySo)** — `ThongTinChuKySo` là ValueObject có trong code nhưng chưa có logic tích hợp ký số thực sự | Cần xác định flow ký số: CSDT ký file trước khi upload, hay hệ thống ký? |
+| 2 | **Outbox Pattern** — đề cập trong spec nhưng chưa có Infrastructure implementation | Cần implement `OutboxMessage`, `OutboxProcessor` |
+| 3 | **AI Reranker / JD Parsing** — module tuyển dụng AI chưa có domain code tương ứng | Có thể nằm trong Application/Infrastructure layer |
+| 4 | **Webhook thông báo** — spec đề cập notify CSDT/NTD khi admin duyệt/từ chối | Domain event đã có; cần Infrastructure handler gửi webhook/email |

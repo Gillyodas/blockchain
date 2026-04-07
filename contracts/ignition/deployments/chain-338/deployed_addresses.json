@@ -1,3 +1,5 @@
 {
-  "MyWalletModule#MyWallet": "0x6Aa377433d906F7E65c6c8086c573C6183C6d249"
+  "MyWalletModule#MyWallet": "0x6Aa377433d906F7E65c6c8086c573C6183C6d249",
+  "GillTokenModule#GillToken": "0x140EcaB315E5b4aee21B31bBc8922c2a63d2Ba57",
+  "MyTokenModule#MyToken": "0xeF3B7a44eD070c7D6e691C921AFD657393582E2e"
 }
