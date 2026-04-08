@@ -17,18 +17,16 @@ classDiagram
         +ThoiGianTao : datetime
         +ThoiGianCapNhat : datetime
         +ThoiGianXoa : datetime
-        +TaoSinhVien(cccd, email...) Result
-        +HuyLienKetSinhVien()
-        +CapNhatThongTinSinhVien()
-        +CapNhatThongTinCSDT()
-        +TaoBangCapChoSinhVien() Result
-        +CapNhatBangCapChoSinhVien() Result
-        +HuyBangCapCuaSinhVien(lyDoHuy LyDoHuy, ghiChu string)
-        +ThuHoiBangCapCuaSinhVien(lyDoThuHoi LyDoThuHoi, ghiChu string)
-        +KhoiPhucBangCapCuaSinhVien()
-        +ThemGiayPhep()
-        +CapNhatGiayPhep()
-        +XoaGiayPhep()
+        +TaoSinhVien(ten, cccd, email, diaChiVi, tkId) Result~SinhVien~
+        +CapNhatThongTinCSDT(ten, diaChiVi) Result
+        +TaoBangCapChoSinhVien(ten, diem, loai, linhVucId, file, link, ngayCap, ngayHetHan, svId, bangCapHienTai) Result~BangCap~
+        +CapNhatBangCap(bangCapCu, ten, diem, loai, linhVucId, file, link, ngayCap, ngayHetHan) Result~BangCap~
+        +HuyBangCap(bangCap, lyDoHuy, ghiChuHuy) Result
+        +ThuHoiBangCap(bangCap, lyDoThuHoi, ghiChuThuHoi) Result
+        +KhoiPhucBangCap(bangCap, lyDoKhoiPhuc, ghiChuKhoiPhuc) Result~BangCap~
+        +GanMaBamXacThucChoBangCap(bangCap, maBam, salt) Result
+        +GanMaBamGiaoDichChoBangCap(bangCap, maBamGiaoDich) Result
+        +ThemGiayPhepCSDT(giayPhep) Result
     }
 
     class NhaTuyenDung {
@@ -37,18 +35,20 @@ classDiagram
         +DiaChi
         +DiaChiViNhaTuyenDung
         +TaiKhoanId
+        +YeuCauDangKyId
+        +HangUyTin : HangUyTin
         +ThoiGianTao : datetime
         +ThoiGianCapNhat : datetime
         +ThoiGianXoa : datetime
-        +CapNhatThongTinNhaTuyenDung()
-        +TaoTTTD()
-        +CapNhatTTTD()
-        +XoaTTTD()
-        +ThemGiayPhep()
-        +CapNhatGiayPhep()
-        +XoaGiayPhep()
-        +DuyetHoSoUngTuyen()
-        +BaoCaoGianLanBangCap()
+        +CapNhatThongTinNhaTuyenDung(ten, diaChi) Result
+        +TaoTTTD(ten, moTa, linhVucId, thoiHan) Result~ThongTinTuyenDung~
+        +CapNhatTTTD(tttdId, ten, moTa, linhVucId, thoiHan) Result
+        +XoaTTTD(tttdId) Result
+        +ThemGiayPhep(duongDan, kieu) Result
+        +CapNhatGiayPhep(oldPath, newPath, kieu) Result
+        +XoaGiayPhep(path) Result
+        +DuyetHoSoUngTuyen(hoSo, trangThai) Result
+        +BaoCaoGianLanBangCap(bangCapId, coSoDaoTaoId, lyDo, ghiChu) Result~BaoCaoGianLan~
     }
 
     class SinhVien {
@@ -83,13 +83,18 @@ classDiagram
         +Salt : string
         +GhiChuHuy : string
         +GhiChuThuHoi : string
+        +GhiChuKhoiPhuc : string
+        +LyDoHuyBangCap : LyDoHuy
+        +LyDoThuHoiBangCap : LyDoThuHoi
+        +LyDoKhoiPhucBangCap : LyDoKhoiPhuc
+        +TrangThaiBangCapHienTai : TrangThaiBangCap
+        +TrangThaiBlockchainHienTai : TrangThaiBlockchain
+        +CoSoDaoTaoCapId : guid
+        +SinhVienId : guid
+        +LinhVucId : guid
         +ThoiGianTao : datetime
         +ThoiGianCapNhat : datetime
         +ThoiGianXoa : datetime
-        +DanhDauDaHuy(lyDoHuy LyDoHuy, ghiChu string)
-        +DanhDauThuHoi(lyDoThuHoi LyDoThuHoi, ghiChu string)
-        +KhoiPhuc()
-        +CapNhatTrangThaiBlockchain(maBamGiaoDich string)
     }
 
     class LinhVuc {
@@ -139,25 +144,37 @@ classDiagram
     class YeuCauDangKy {
         +Id
         +TenToChuc
-        +Email
-        +SDT
-        +DiaChi
-        +DuyetBoiAdminId
-        +LyDoTuChoi : int
+        +TaiKhoanId
+        +Loai : LoaiToChucDangKy
+        +TrangThai : TrangThaiYeuCauDangKy
+        +LyDo : LyDoTuChoi
+        +GhiChuTuChoi : string
+        +GhiChuDuyet : string
         +ThoiGianTao : datetime
-        +ThoiGianCapNhat : datetime
-        +DangKyTaiKhoanCoSoDaoTao() Result
-        +DangKyTaiKhoanNhaTuyenDung()
-        +HuyYeuCauDangKy()
+        +ThoiGianNop : datetime
+        +ThoiGianXetDuyet : datetime
+        +ThemGiayPhep(duongDan, loaiCSDT, thoiHan) Result
+        +ThemGiayPhep(duongDan, loaiNTD) Result
+        +NopHoSo() Result
+        +TaiLenLaiGiayPhep(loai, duongDanMoi) Result
+        +AdminTuChoi(lyDo, ghiChu) Result
+        +AdminDuyet(ghiChu) Result
     }
 
     class BaoCaoGianLan {
         +Id
-        +LyDo : string
+        +BangCapId : guid
+        +CoSoDaoTaoId : guid
+        +NguoiBaoCaoId : guid
+        +LoaiNguoiBaoCao : LoaiNguoiBaoCao
+        +LyDo : LyDoBaoCaoGianLan
         +GhiChu : string
+        +TrangThai : TrangThaiBaoCao
         +ThoiGianBaoCao : datetime
         +ThoiGianCapNhat : datetime
-        +CapNhatTrangThai(trangThai TrangThaiBaoCao)
+        +TiepNhan() Result
+        +XacNhanGianLan() Result
+        +TuChoiBaoCao() Result
     }
 
     %% ============================================================
@@ -192,12 +209,13 @@ classDiagram
 
     class UyTinToChuc {
         <<ValueObject>>
-        +Diem
+        +DiemUyTin
+        +SoLuongGiayPhep
         +SoLuongBangCapPhatHanh
         +SoLuongBangCapThuHoi
         +SoLuongBangCapBiBaoCaoGianLan
         +SoLuongXacMinhHopLe
-        +XepHangHienTai
+        +Hang : HangUyTin
     }
 
     %% ============================================================
@@ -298,13 +316,12 @@ classDiagram
 
     class LyDoTuChoi {
         <<enumeration>>
-        GiayToKhongHopLe
-        ChuKySoKhongHopLe
-        ThieuGiayToYeuCau
-        ThongTinKhongChinhXac
-        ToChucDaTonTai
-        KhongDuDieuKienHoatDong
-        LyDoKhac
+        GiayToKhongHopLe = 0
+        ThongTinKhongChinhXac = 1
+        KhongDuGiayTo = 2
+        ToChucDaTonTai = 3
+        ChuKySoKhongHopLe = 4
+        Khac = 99
     }
 
     class LoaiToChucDangKy {
@@ -353,6 +370,32 @@ classDiagram
         TuChoi
     }
 
+    class LyDoBaoCaoGianLan {
+        <<enumeration>>
+        GiaMaoBangCap = 0
+        ThongTinSai = 1
+        SuDungTraiPhep = 2
+        GianLanXacNhan = 3
+        Khac = 99
+    }
+
+    class LoaiNguoiBaoCao {
+        <<enumeration>>
+        SinhVien
+        NhaTuyenDung
+    }
+
+    class LyDoKhoiPhuc {
+        <<enumeration>>
+        SuaLoiNhapLieu = 0
+        SinhVienKhongConViPham = 1
+        DaoHanPhucHoi = 2
+        XacNhanKhongGianLan = 3
+        QuyDinhDuocCapNhat = 4
+        QuyetDinhPhapLyBiHuy = 5
+        Khac = 99
+    }
+
     %% ============================================================
     %% RELATIONSHIPS — COMPOSITION (◆)
     %% ============================================================
@@ -383,7 +426,7 @@ classDiagram
     %% RELATIONSHIPS — ASSOCIATION (many-to-many)
     %% ============================================================
 
-    CoSoDaoTao "0..*" -- "0..*" SinhVien : quản lý
+    %% CSDT↔SinhVien: quan hệ implicit qua BangCap.CoSoDaoTaoCapId + BangCap.SinhVienId
 
     %% ============================================================
     %% RELATIONSHIPS — DIRECTED ASSOCIATION (→)
@@ -394,6 +437,7 @@ classDiagram
     BangCap --> LoaiBangCap
     BangCap --> LyDoHuy
     BangCap --> LyDoThuHoi
+    BangCap --> LyDoKhoiPhuc
     BangCap --> TrangThaiBlockchain
     BangCap --> TrangThaiBangCap
 
@@ -412,9 +456,10 @@ classDiagram
     BangCapUngTuyen --> BangCap : tham chiếu
 
     BaoCaoGianLan --> BangCap : báo cáo về
-    BaoCaoGianLan --> SinhVien : báo cáo bởi SV
-    BaoCaoGianLan --> NhaTuyenDung : báo cáo bởi NTD
+    BaoCaoGianLan --> CoSoDaoTao : liên quan CSDT
     BaoCaoGianLan --> TrangThaiBaoCao
+    BaoCaoGianLan --> LyDoBaoCaoGianLan
+    BaoCaoGianLan --> LoaiNguoiBaoCao
 
     YeuCauDangKy --> TrangThaiYeuCauDangKy
     YeuCauDangKy --> LyDoTuChoi

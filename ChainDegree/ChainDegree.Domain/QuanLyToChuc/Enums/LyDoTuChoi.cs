@@ -5,5 +5,7 @@ public enum LyDoTuChoi
     GiayToKhongHopLe = 0,
     ThongTinKhongChinhXac = 1,
     KhongDuGiayTo = 2,
-    Khac = 3
+    ToChucDaTonTai = 3,
+    ChuKySoKhongHopLe = 4,
+    Khac = 99
 }

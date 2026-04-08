@@ -1026,7 +1026,7 @@
 | 1 | NhapTrungLap | −5 |
 | 2 | YeuCauCuaSinhVien | 0 |
 | 3 | YeuCauCuaCoSoDaoTao | 0 |
-| 4 | Khac | 0 |
+| 99 | Khac | 0 |
 
 ---
 
@@ -1040,7 +1040,7 @@
 | 3 | GianLanXacNhan | −200 |
 | 4 | ThayDoiQuyDinh | −5 |
 | 5 | QuyetDinhPhapLy | 0 |
-| 6 | Khac | 0 |
+| 99 | Khac | 0 |
 
 ---
 
@@ -1081,17 +1081,14 @@
 
 ### LyDoTuChoi (Admin từ chối đăng ký)
 
-> ⚠️ **Domain code hiện có 4 giá trị nhưng class diagram thiết kế 7 giá trị.** Bảng dưới dùng giá trị từ class diagram (là thiết kế đầy đủ hơn). Domain code cần cập nhật để khớp.
-
 | Giá trị | Tên |
 |:-------:|-----|
 | 0 | GiayToKhongHopLe |
-| 1 | ChuKySoKhongHopLe |
-| 2 | ThieuGiayToYeuCau |
-| 3 | ThongTinKhongChinhXac |
-| 4 | ToChucDaTonTai |
-| 5 | KhongDuDieuKienHoatDong |
-| 6 | LyDoKhac |
+| 1 | ThongTinKhongChinhXac |
+| 2 | KhongDuGiayTo |
+| 3 | ToChucDaTonTai |
+| 4 | ChuKySoKhongHopLe |
+| 99 | Khac |
 
 ---
 
@@ -1125,7 +1122,7 @@
 | 1 | ThongTinSai |
 | 2 | SuDungTraiPhep |
 | 3 | GianLanXacNhan |
-| 4 | Khac |
+| 99 | Khac |
 
 ---
 
@@ -1178,44 +1175,12 @@
 > Mỗi bằng cấp ghi blockchain thành công: +2. Xác minh hợp lệ bởi NTD: +1.
 
 ---
-
-## Ghi chú về sai lệch so với tài liệu gốc
-
-### Thay đổi có chủ ý so với hopdongAPI.docx / PhanTichAPI.docx
-
-| Vấn đề | Tài liệu gốc | ContractAPI.md này |
-|--------|-------------|-------------------|
-| `DELETE .../sinh-vien/{sv_id}/lien-ket` | Có trong cả 2 docx | **Bỏ** — không có liên kết tường minh CSDT↔SV; quan hệ implicit qua `BangCap.CoSoDaoTaoCapId` |
-| `KieuGiayPhepNTD` (mục NTD management) | `hopdongAPI.docx` mục 6.1 dùng `GiayPhepKinhDoanh=1, GiayChungNhanThue=2, ...` | Domain code: `GiayPhepDangKyKinhDoanh=0, MaSoThue=1, CongVanXacNhanBoPhanHR=2` |
-| `LyDoTuChoi` | `hopdongAPI.docx` & class diagram có 7 giá trị; domain code chỉ có 4 | **Dùng 7 giá trị từ class diagram** (domain code cần cập nhật) |
-| Admin xử lý `BaoCaoGianLan` | `hopdongAPI.docx` dùng 1 endpoint `PUT .../trang-thai` | **3 endpoint riêng** theo domain operations: `TiepNhan`, `XacNhanGianLan`, `TuChoiBaoCao` |
-| `PUT ThongTinTuyenDung` có trường `trangThai` | `hopdongAPI.docx` | **Bỏ** — `TrangThaiThongTinTuyenDung` enum không tồn tại trong domain; dùng soft-delete |
-| Cập nhật SinhVien có `soDienThoai` | `hopdongAPI.docx` | `soDienThoai` thuộc ControlHub Identity, không thuộc domain ChainDegree |
-| `lyDo` BaoCaoGianLan là `string` | `PhanTichAPI.docx` | Enum `LyDoBaoCaoGianLan` |
-| `TrangThaiBangCap` giá trị đầu là `Nhap` | `hopdongAPI.docx`, `PhanTichAPI.docx`, đặc tả | **`ChuaXacNhan`** — theo domain code (file `TrangThaiBangCap.cs`) |
-| `ghiChuThuHoi` luôn bắt buộc | `hopdongAPI.docx` | Chỉ bắt buộc khi `lyDoThuHoi = Khac` (nhất quán với `LyDoHuy` và `LyDoKhoiPhuc`) |
-| `PUT /bang-cap/{bc_id}` trả 200 OK | `hopdongAPI.docx` | **202 Accepted** — thao tác liên quan blockchain (async) |
-| `POST /khoi-phuc` trả `DaXacNhan` ngay | `hopdongAPI.docx` | **202 Accepted**, trả `ChuaXacNhan` + `ChoDuyet` — đợi blockchain confirm |
-| Thiếu `diaChiViSinhVien` trong tạo SV | Cả 2 docx | Thêm — domain `SinhVien.Create` yêu cầu tham số này |
-
 ### Domain code gaps (cần cập nhật domain)
 
 | Gap | Mô tả |
 |-----|-------|
-| `LyDoTuChoi` chỉ có 4 giá trị | Class diagram thiết kế 7 — cần bổ sung `ChuKySoKhongHopLe`, `ThieuGiayToYeuCau`, `ToChucDaTonTai`, `KhongDuDieuKienHoatDong` |
-| `NhaTuyenDung` thiếu `UyTinToChuc` | Domain chỉ có `HangUyTin` (enum đơn), không có `UyTinToChuc` ValueObject như `CoSoDaoTao` |
-| `NhaTuyenDung.BaoCaoGianLanBangCap()` sai type | Nhận `string lyDo` thay vì `LyDoBaoCaoGianLan` enum |
 | `NhaTuyenDung` thiếu business fields | ERD/domain không có `sdt`, `email`, `website`, `logo`, `moTa`, `maSoThue` — cần thêm nếu muốn hỗ trợ profile đầy đủ |
-
-### ERD / Class diagram gaps (cần cập nhật diagram)
-
-| Gap | Mô tả |
-|-----|-------|
-| `class.mmd` còn `HuyLienKetSinhVien()` | Đã bị loại bỏ theo quyết định thiết kế |
-| `class.mmd` tên method sai | `CapNhatBangCapChoSinhVien` → tên thực là `CapNhatBangCap` |
-| `class.mmd` `LyDoTuChoi` có 7 giá trị | Domain code chỉ có 4 — cần đồng bộ sau khi domain được cập nhật |
-| `class.mmd` `TrangThaiBangCap` thiếu giá trị `ChuaXacNhan` | Đặc tả viết `Nhap` nhưng domain code là `ChuaXacNhan` — đặc tả cần sửa |
-| `erd.mmd` `BaoCaoGianLan.LyDo: string` | Domain dùng `LyDoBaoCaoGianLan` enum |
-| `erd.mmd` `BaoCaoGianLan` có 2 FK reporter | Domain dùng discriminator pattern: `NguoiBaoCaoId + LoaiNguoiBaoCao` |
-| `erd.mmd` còn `CSDTSinhVien` junction | Thiết kế đã loại bỏ explicit CSDT↔SV link |
-| `erd.mmd` `YeuCauDangKy` thiếu fields | Thiếu `GhiChuDuyet`, `ThoiGianNop`, `ThoiGianXetDuyet` (đã thêm vào domain) |
+| **Bug** `HoSoUngTuyen.Create()` là `internal` không có aggregate root wrap | Application layer không gọi được. Cần thêm method factory vào aggregate (tương tự `TaoBangCapChoSinhVien`, `TaoSinhVien`). F-30 không implement được nếu không fix |
+| `CoSoDaoTao` thiếu method để trừ điểm khi xác nhận gian lận | `UyTinToChuc.TruDiemBangCapGianLan()` tồn tại trong ValueObject nhưng không có public method trên `CoSoDaoTao` gọi nó. `UyTin` có `private set` nên Application layer không cập nhật trực tiếp được. Domain event handler F-22 không có entry point |
+| `CoSoDaoTao` thiếu method để cộng điểm khi Verifier xác minh hợp lệ | `UyTinToChuc.CongDiemXacMinhHopLe()` tồn tại nhưng không có wrapper trên `CoSoDaoTao`. F-37 (+1 xác minh hợp lệ) không có entry point trong aggregate |
+| `CoSoDaoTao` thiếu `YeuCauDangKyId` trong domain model | `YeuCauDangKyId` tồn tại ở Infrastructure (shadow property trong `CoSoDaoTaoConfiguration`) nhưng không có trong domain aggregate — Application layer phải set qua EF shadow property khi handle `CoSoDaoTaoApprovedEvent` |

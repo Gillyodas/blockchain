@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ChainDegree.Domain.BaoCaoGianLan.Enums;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
 using ChainDegree.Domain.TuyenDung.Entities;
 using ChainDegree.Domain.TuyenDung.Enums;
@@ -24,7 +22,6 @@ public class NhaTuyenDung
     public DateTime ThoiGianTao { get; private set; }
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
-    public HangUyTin HangUyTin { get; private set; }
 
     private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, DateTime thoiGianTao)
     {
@@ -132,9 +129,11 @@ public class NhaTuyenDung
         return hoSo.CapNhatTrangThai(trangThai);
     }
 
-    public Result BaoCaoGianLanBangCap(Guid bangCapId, string lyDo, string ghiChu)
+    public Result<ChainDegree.Domain.BaoCaoGianLan.Aggregates.BaoCaoGianLan> BaoCaoGianLanBangCap(Guid bangCapId, Guid coSoDaoTaoId, LyDoBaoCaoGianLan lyDo, string? ghiChu)
     {
-        ThoiGianCapNhat = DateTime.UtcNow;
-        return Result.Success();
+        var result = ChainDegree.Domain.BaoCaoGianLan.Aggregates.BaoCaoGianLan.Create(bangCapId, this.Id, LoaiNguoiBaoCao.NhaTuyenDung, coSoDaoTaoId, lyDo, ghiChu);
+        if (result.IsSuccess)
+            ThoiGianCapNhat = DateTime.UtcNow;
+        return result;
     }
 }

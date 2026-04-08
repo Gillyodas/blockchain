@@ -10,5 +10,5 @@ public enum LyDoHuy
     NhapTrungLap = 1,
     YeuCauCuaSinhVien = 2,
     YeuCauCuaCoSoDaoTao = 3,
-    Khac = 4
+    Khac = 99
 }

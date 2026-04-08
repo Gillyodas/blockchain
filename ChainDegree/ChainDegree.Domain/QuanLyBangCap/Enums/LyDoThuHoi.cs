@@ -12,5 +12,5 @@ public enum LyDoThuHoi
     GianLanXacNhan = 3,
     ThayDoiQuyDinh = 4,
     QuyetDinhPhapLy = 5,
-    Khac = 6
+    Khac = 99
 }

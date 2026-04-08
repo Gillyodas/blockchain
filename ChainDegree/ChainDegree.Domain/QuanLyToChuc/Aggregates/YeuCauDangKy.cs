@@ -104,7 +104,7 @@ public class YeuCauDangKy : AggregateRoot
 
     public Result TaiLenLaiGiayPhep(LoaiGiayPhepCSDT loai, string duongDanMoi)
     {
-        if (TrangThai != TrangThaiYeuCauDangKy.DaGui)
+        if (TrangThai != TrangThaiYeuCauDangKy.Nhap)
             return Result.Failure(QuanLyToChucError.HoSoKhongTheXetDuyet);
 
         var giayPhep = _giayPhepCSDTs.FirstOrDefault(x => x.LoaiGiayPhep == loai && x.TrangThai == TrangThaiXacMinh.TuChoi);
