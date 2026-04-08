@@ -30,6 +30,16 @@
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks.json" />
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\new_runbooks_batch2.json" />
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\sample_runbooks.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\runbook_seeds.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\system_knowledge.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks_batch2.json" />
+    <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\sample_runbooks.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\runbook_seeds.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\system_knowledge.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks_batch2.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\sample_runbooks.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +49,22 @@
   <ItemGroup>
     <ProjectReference Include="..\ChainDegree.Domain\ChainDegree.Domain.csproj" />
     <ProjectReference Include="..\ChainDegree.SharedKernel\ChainDegree.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BaoCaoGianLan\Commands\" />
+    <Folder Include="BaoCaoGianLan\Interfaces\Repositories\" />
+    <Folder Include="BaoCaoGianLan\Queries\" />
+    <Folder Include="QuanLyBangCap\Queries\" />
+    <Folder Include="QuanLyToChuc\Interfaces\Repositories\" />
+    <Folder Include="QuanLyToChuc\Commands\" />
+    <Folder Include="QuanLyToChuc\Queries\" />
+    <Folder Include="TuyenDung\Commands\" />
+    <Folder Include="TuyenDung\Interfaces\Repositories\" />
+    <Folder Include="TuyenDung\Queries\" />
+    <Folder Include="XacMinhBangCap\Commands\" />
+    <Folder Include="XacMinhBangCap\Interfaces\Repositories\" />
+    <Folder Include="XacMinhBangCap\Queries\" />
   </ItemGroup>
 
 </Project>

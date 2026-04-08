@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="nuget.config" />
+  </Folder>
   <Project Path="ChainDegree.API/ChainDegree.API.csproj" />
   <Project Path="ChainDegree.Application/ChainDegree.Application.csproj" />
   <Project Path="ChainDegree.Domain/ChainDegree.Domain.csproj" />

@@ -36,10 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ChainDegree.Application\ChainDegree.Application.csproj" />
     <ProjectReference Include="..\ChainDegree.Domain\ChainDegree.Domain.csproj" />
     <ProjectReference Include="..\ChainDegree.SharedKernel\ChainDegree.SharedKernel.csproj" />
