@@ -19,4 +19,5 @@ public enum LoaiBangCap
     ChungNhanHoanThanhKhoaHoc = 10,
     ChungNhanThucTap = 11,
     GiayKhenThuong = 12,
+    Khac = 99
 }

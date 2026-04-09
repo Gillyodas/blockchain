@@ -386,7 +386,8 @@
 
 | Trường | Kiểu | Bắt buộc | Mô tả |
 |--------|------|:--------:|-------|
-| sinhVienId | guid | ✅ | ID sinh viên được cấp |
+| sinhVienId | guid | ❌ | ID sinh viên được cấp |
+| CCCD | string | ❌ | CCCD của sinh viên |
 | ten | string | ✅ | Tên bằng cấp |
 | loaiBangCap | int (enum `LoaiBangCap`) | ✅ | Xem bảng enum |
 | linhVucId | guid | ✅ | ID lĩnh vực |
@@ -395,6 +396,8 @@
 | ngayHetHan | datetime | ❌ | Ngày hết hạn (để trống nếu không có) |
 | file | file (PDF) | ❌ | File PDF bằng cấp gốc |
 | link | string | ❌ | URL tham chiếu ngoài |
+
+- **Điều kiện:** Ít nhất phải có CCCD hoặc sinhVienId để tạo bằng cấp cho sinh viên
 
 **Responses:**
 

@@ -60,4 +60,6 @@ public static class BangCapError
 
     public static readonly Error GhiChuThuHoiKhongDuocBoTrongKhiLyDoThuHoiLaKhac =
         Error.Validation("BangCap.GhiChuThuHoiKhongDuocBoTrongKhiLyDoThuHoiLaKhac", "Ghi chú thu hồi không được bỏ trống khi lý do thu hồi là khác");
+
+    
 }

@@ -28,5 +28,9 @@ namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
 
         public static readonly Error SinhVienDaCoBangCapCungLoaiVaLinhVuc =
             Error.Conflict("CoSoDaoTao.SinhVienDaCoBangCapCungLoaiVaLinhVuc", "Sinh viên đã có bằng cấp cùng loại và cùng lĩnh vực đang hiệu lực.");
+
+        //Application errors
+        public static readonly Error KhongTimThayCoSoDaoTao =
+            Error.NotFound("CoSoDaoTao.KhongTimThayCoSoDaoTao", "Không tìm thấy cơ sở đào tạo");
     }
 }

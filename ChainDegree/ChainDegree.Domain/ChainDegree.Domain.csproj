@@ -7,16 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ControlHub.Domain" Version="1.0.8" />
-    <PackageReference Include="ControlHub.SharedKernel" Version="1.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ChainDegree.SharedKernel\ChainDegree.SharedKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Common\ValueObjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ControlHub.Domain" Version="1.0.8" />
   </ItemGroup>
 
 </Project>

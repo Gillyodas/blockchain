@@ -176,7 +176,7 @@ Issuer có thể cập nhật các trường: **Họ tên**, **Email** của sin
 
 - Tài khoản Issuer đang hoạt động.
 - CSDT có thể cấp bằng cho SV nếu CSDT đó biết **CCCD** của SV (không yêu cầu SV phải thuộc CSDT đó).
-- Sinh viên chưa có bằng cùng loại (`LoaiBangCap`) và cùng lĩnh vực (`LinhVuc`) đang hiệu lực.
+- Sinh viên chưa có bằng cùng loại (`LoaiBangCap`) và cùng lĩnh vực (`LinhVuc`) và được cấp bởi (`CoSoDaoTao`) này đang hiệu lực.
 
 ### 4.2. Luồng chính
 

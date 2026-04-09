@@ -27,12 +27,17 @@
     <Content Remove="C:\Users\Gill\.nuget\packages\controlhub.core\1.3.17\contentFiles\any\net8.0\sample_runbooks.json" />
     <Content Remove="C:\Users\tokie\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks.json" />
     <Content Remove="C:\Users\tokie\.nuget\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks_batch2.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\runbook_seeds.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\AI\system_knowledge.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\new_runbooks_batch2.json" />
+    <Content Remove="E:\blockchain\ChainDegree\packages\controlhub.core\1.3.20\contentFiles\any\net8.0\sample_runbooks.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ControlHub.Core" Version="1.3.20" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.13.11" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.13.20" />
   </ItemGroup>
 
   <ItemGroup>
