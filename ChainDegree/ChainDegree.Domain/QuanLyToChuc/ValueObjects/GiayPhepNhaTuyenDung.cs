@@ -13,6 +13,8 @@ public class GiayPhepNhaTuyenDung : ValueObject
     public string DuongDanLuuTru { get; private set; }
     public LoaiGiayPhepNTD LoaiGiayPhep { get; private set; }
     public TrangThaiXacMinh TrangThai { get; private set; }
+
+    private GiayPhepNhaTuyenDung() { }
     private GiayPhepNhaTuyenDung(string duongDanLuuTru, LoaiGiayPhepNTD loai, TrangThaiXacMinh trangThai)
     {
         DuongDanLuuTru = duongDanLuuTru;

@@ -15,6 +15,8 @@ public class GiayPhepNhaTuyenDung : ValueObject
     public DateTime? ThoiGianDuocXacMinh { get; private set; }
     public Guid? XacMinhBoiAdminId { get; private set; }
 
+    private GiayPhepNhaTuyenDung() { }
+
     private GiayPhepNhaTuyenDung(string duongDanLuuTru, KieuGiayPhepNTD kieuGiayPhep, DateTime thoiGianTaiLen, DateTime? thoiGianDuocXacMinh, Guid? xacMinhBoiAdminId)
     {
         DuongDanLuuTru = duongDanLuuTru;

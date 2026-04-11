@@ -24,6 +24,8 @@ public class YeuCauDangKy : AggregateRoot
     public string? GhiChuTuChoi { get; private set; }
     public string? GhiChuDuyet { get; private set; }
 
+    private YeuCauDangKy() { }
+
     private YeuCauDangKy(Guid id, string tenToChuc, LoaiToChuc loai, Guid tkId, TrangThaiYeuCauDangKy trangThai)
     {
         Id = id;

@@ -24,6 +24,18 @@ public class KetQuaPhanTichConfiguration : IEntityTypeConfiguration<KetQuaPhanTi
 
         builder.Property(k => k.ThoiGianPhanTich).IsRequired();
 
+        builder.HasOne<ThongTinTuyenDung>()
+            .WithMany()
+            .HasForeignKey(k => k.ThongTinTuyenDungId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<HoSoUngTuyen>()
+            .WithMany()
+            .HasForeignKey(k => k.HoSoUngTuyenId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(k => k.HoSoUngTuyenId);
         builder.HasIndex(k => k.ThongTinTuyenDungId);
     }

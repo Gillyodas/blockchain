@@ -18,6 +18,8 @@ public class UyTinToChuc : ValueObject
 
     private const int DIEM_SO_VOI_MOI_GIAY_PHEP = 50;
 
+    private UyTinToChuc() { }
+
     private UyTinToChuc(
     int diemUyTin,
     int soLuongGiayPhep,

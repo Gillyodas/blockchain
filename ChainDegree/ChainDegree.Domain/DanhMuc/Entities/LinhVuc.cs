@@ -8,6 +8,8 @@ public class LinhVuc
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
 
+    private LinhVuc() { }
+
     private LinhVuc(Guid id, string ten)
     {
         Id = id;

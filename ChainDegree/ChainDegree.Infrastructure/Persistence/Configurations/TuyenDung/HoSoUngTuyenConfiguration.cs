@@ -1,3 +1,4 @@
+using ChainDegree.Domain.QuanLyBangCap.Entities;
 using ChainDegree.Domain.TuyenDung.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +19,18 @@ public class HoSoUngTuyenConfiguration : IEntityTypeConfiguration<HoSoUngTuyen>
         builder.Property(h => h.ThoiGianUngTuyen).IsRequired();
         builder.Property(h => h.ThoiGianCapNhat);
         builder.Property(h => h.ThoiGianXoa);
+
+        builder.HasOne<SinhVien>()
+            .WithMany()
+            .HasForeignKey(h => h.SinhVienId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<ThongTinTuyenDung>()
+            .WithMany()
+            .HasForeignKey(h => h.ThongTinTuyenDungId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(h => new { h.SinhVienId, h.ThongTinTuyenDungId }).IsUnique()
             .HasFilter("[ThoiGianXoa] IS NULL"); // một SV chỉ nộp một lần cho mỗi tin tuyển dụng

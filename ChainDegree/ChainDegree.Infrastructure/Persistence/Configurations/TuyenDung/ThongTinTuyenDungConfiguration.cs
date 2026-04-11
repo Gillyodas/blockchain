@@ -1,3 +1,5 @@
+using ChainDegree.Domain.DanhMuc.Entities;
+using ChainDegree.Domain.TuyenDung.Aggregates;
 using ChainDegree.Domain.TuyenDung.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -30,5 +32,17 @@ public class ThongTinTuyenDungConfiguration : IEntityTypeConfiguration<ThongTinT
         builder.Property(t => t.ThoiGianTao).IsRequired();
         builder.Property(t => t.ThoiGianCapNhat);
         builder.Property(t => t.ThoiGianXoa); // soft delete
+
+        builder.HasOne<NhaTuyenDung>()
+            .WithMany()
+            .HasForeignKey(t => t.NhaTuyenDungId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<LinhVuc>()
+            .WithMany()
+            .HasForeignKey(t => t.LinhVucId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

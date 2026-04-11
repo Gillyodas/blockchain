@@ -26,6 +26,8 @@ public class YeuCauDangKyConfiguration : IEntityTypeConfiguration<YeuCauDangKy>
         builder.Property(y => y.GhiChuTuChoi).HasMaxLength(1024);
         builder.Property(y => y.GhiChuDuyet).HasMaxLength(1024);
 
+        builder.HasIndex(y => y.TaiKhoanId).HasName("IX_YeuCauDangKy_TaiKhoanId");
+
         // Owned collection: GiayPhepCSDT của YeuCauDangKy — bảng riêng
         builder.OwnsMany(y => y.GiayPhepCSDTs, giayPhep =>
         {

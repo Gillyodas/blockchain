@@ -1,5 +1,6 @@
 
 using System.Reflection;
+using ChainDegree.Infrastructure;
 using ControlHub;
 using Scalar.AspNetCore;
 using Serilog;
@@ -51,6 +52,8 @@ namespace ChainDegree.API
                 }
                 throw;
             }
+
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 

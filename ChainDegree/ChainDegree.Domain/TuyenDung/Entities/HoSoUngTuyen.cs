@@ -22,6 +22,8 @@ public class HoSoUngTuyen
 
     public IReadOnlyCollection<BangCapUngTuyen> BangCapUngTuyens => _bangCapUngTuyens.AsReadOnly();
 
+    private HoSoUngTuyen() { }
+
     private HoSoUngTuyen(Guid id, Guid thongTinTuyenDungId, Guid sinhVienId, DateTime thoiGianUngTuyen, TrangThaiUngTuyen trangThai)
     {
         Id = id;

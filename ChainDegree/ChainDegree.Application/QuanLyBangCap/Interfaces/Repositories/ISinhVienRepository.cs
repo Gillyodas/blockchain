@@ -8,6 +8,6 @@ namespace ChainDegree.Application.QuanLyBangCap.Interfaces.Repositories;
 
 public interface ISinhVienRepository
 {
-    Task<Result<SinhVien>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-    Task<Result<SinhVien>> GetByCCCDAsync(string cccd, CancellationToken cancellationToken);
+    Task<SinhVien?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<SinhVien?> GetByCCCDAsync(string cccd, CancellationToken cancellationToken);
 }
