@@ -10,6 +10,8 @@ public class BangCapUngTuyen
     public Guid HoSoUngTuyenId { get; private set; }
     public Guid BangCapId { get; private set; }
 
+    private BangCapUngTuyen() { }
+
     private BangCapUngTuyen(Guid hoSoUngTuyenId, Guid bangCapId)
     {
         HoSoUngTuyenId = hoSoUngTuyenId;

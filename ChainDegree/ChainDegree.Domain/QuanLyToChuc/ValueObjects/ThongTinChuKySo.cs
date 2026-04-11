@@ -13,6 +13,8 @@ public class ThongTinChuKySo : ValueObject
     public DateTime NgayHetHan { get; private set; }
     public DateTime XacMinhLuc { get; private set; }
 
+    private ThongTinChuKySo() { }
+
     private ThongTinChuKySo(bool coChuKySo, bool hopLe, string nhaCungCap, bool nhaCungCapDuocTinTuong, DateTime ngayHetHan, DateTime xacMinhLuc)
     {
         CoChuKySo = coChuKySo;

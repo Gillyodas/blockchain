@@ -40,6 +40,8 @@ public class SinhVienConfiguration : IEntityTypeConfiguration<SinhVien>
             .HasColumnName("TaiKhoanId")
             .IsRequired();
 
+        builder.HasIndex(s => s.TKId).HasName("IX_SinhVien_TaiKhoanId");
+
         builder.Property(s => s.ThoiGianTao).IsRequired();
         builder.Property(s => s.ThoiGianCapNhat);
         builder.Property(s => s.ThoiGianXoa); // soft delete khi không còn CSDT nào quản lý

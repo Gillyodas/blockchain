@@ -21,6 +21,8 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             => _danhSachGiayPhepCSDT.AsReadOnly();
         public UyTinToChuc UyTin { get; private set; }
 
+        private CoSoDaoTao() { }
+
         private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT,
             Guid tkId, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin)
         {
@@ -81,16 +83,8 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
             string? link,
             DateTime ngayCap,
             DateTime? ngayHetHan,
-            Guid sinhVienId,
-            IEnumerable<BangCap> bangCapHienTai)
+            Guid sinhVienId)
         {
-            bool trung = bangCapHienTai.Any(b =>
-                b.LoaiBangCap == loaiBangCap &&
-                b.LinhVucId == linhVucId &&
-                b.TrangThaiBangCapHienTai == TrangThaiBangCap.DaXacNhan);
-
-            if (trung)
-                return Result<BangCap>.Failure(CoSoDaoTaoError.SinhVienDaCoBangCapCungLoaiVaLinhVuc);
 
             return BangCap.Create(ten, diem, loaiBangCap, linhVucId, ngayCap, ngayHetHan, file, link, this.Id, sinhVienId);
         }

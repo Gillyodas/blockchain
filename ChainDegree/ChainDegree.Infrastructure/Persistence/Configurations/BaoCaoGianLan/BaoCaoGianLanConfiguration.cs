@@ -1,3 +1,4 @@
+using ChainDegree.Domain.QuanLyBangCap.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,6 +25,12 @@ public class BaoCaoGianLanConfiguration : IEntityTypeConfiguration<Domain.BaoCao
         // Shadow property — admin nào xử lý báo cáo (spec 10.2 bước 4)
         // Không thuộc domain model, set bởi Application handler khi TiepNhan/XacNhanGianLan/TuChoiBaoCao
         builder.Property<Guid?>("XuLyBoiAdminId");
+
+        builder.HasOne<CoSoDaoTao>()
+            .WithMany()
+            .HasForeignKey(b => b.CoSoDaoTaoId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(b => b.BangCapId);
         builder.HasIndex(b => b.NguoiBaoCaoId);

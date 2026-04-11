@@ -1,4 +1,5 @@
 using ChainDegree.Domain.QuanLyBangCap.Aggregates;
+using ChainDegree.Domain.QuanLyToChuc.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,6 +33,12 @@ public class CoSoDaoTaoConfiguration : IEntityTypeConfiguration<CoSoDaoTao>
         // Shadow property — truy vết YeuCauDangKy nguồn gốc (spec 2.1 bước 7a)
         // Không thuộc domain model, set bởi Application handler khi xử lý CoSoDaoTaoApprovedEvent
         builder.Property<Guid>("YeuCauDangKyId").IsRequired();
+
+        builder.HasOne<YeuCauDangKy>()
+            .WithOne()
+            .HasForeignKey<CoSoDaoTao>("YeuCauDangKyId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Value object: UyTinToChuc — flattened với tiền tố UyTin_
         builder.OwnsOne(c => c.UyTin, uyTin =>

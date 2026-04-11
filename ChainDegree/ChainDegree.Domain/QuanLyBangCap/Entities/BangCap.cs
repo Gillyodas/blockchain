@@ -32,6 +32,8 @@ public class BangCap
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
 
+    private BangCap() { }
+
     private BangCap(
         Guid id, string ten, double? diem, LoaiBangCap loaiBangCap, Guid linhVucId,
         DateTime ngayCap, DateTime? ngayHetHan, string? file, string? link,

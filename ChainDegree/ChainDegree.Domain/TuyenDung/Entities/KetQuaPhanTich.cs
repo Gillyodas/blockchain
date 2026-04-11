@@ -13,6 +13,8 @@ public class KetQuaPhanTich
     public string KetLuan { get; private set; }
     public DateTime ThoiGianPhanTich { get; private set; }
 
+    private KetQuaPhanTich() { }
+
     private KetQuaPhanTich(Guid id, Guid thongTinTuyenDungId, Guid hoSoUngTuyenId, double phanTramPhuHop, string ketLuan, DateTime thoiGianPhanTich)
     {
         Id = id;

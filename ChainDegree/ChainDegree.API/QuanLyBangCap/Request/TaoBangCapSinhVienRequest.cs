@@ -1,3 +1,5 @@
+using ChainDegree.Domain.QuanLyBangCap.Enums;
+
 namespace ChainDegree.API.QuanLyBangCap.Request;
 
 public class TaoBangCapSinhVienRequest
@@ -5,7 +7,8 @@ public class TaoBangCapSinhVienRequest
     public Guid? SinhVienId { get; set; }
     public string? CCCD { get; set; }
     public string TenSinhVien { get; set; } = null!;
-    public int LoaiBangCap { get; set; }
+    public LoaiBangCap LoaiBangCap { get; set; }
+    public string TenBangCap { get; set; } = null!;
     public Guid LinhVucId { get; set; }
     public double? Diem { get; set; }
     public DateTime NgayCap { get; set; }

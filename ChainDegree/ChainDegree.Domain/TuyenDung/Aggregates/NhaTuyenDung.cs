@@ -23,6 +23,8 @@ public class NhaTuyenDung
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
 
+    private NhaTuyenDung() { }
+
     private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, DateTime thoiGianTao)
     {
         Id = id; 

@@ -25,6 +25,8 @@ public class SinhVien
         new(@"^0\d{2}[0-9]\d{2}\d{6}$",
             RegexOptions.Compiled);
 
+    private SinhVien() { }
+
     private SinhVien(Guid id, string ten, string cccd, Email email, string diaChiViSinhVien, Guid tkId)
     {
         Id = id;

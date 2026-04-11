@@ -11,7 +11,8 @@ public sealed record TaoBangCapSinhVienCommand(
     Guid? SinhVienId,
     string? CCCD,
     string TenSinhVien,
-    int LoaiBangCap,
+    LoaiBangCap LoaiBangCap,
+    string TenBangCap,
     Guid LinhVucId,
     double? Diem,
     DateTime NgayCap,
@@ -21,4 +22,4 @@ public sealed record TaoBangCapSinhVienCommand(
     Guid CoSoDaoTaoId
 ) : IRequest<Result<TaoBangCapSinhVienCommandResult>>;
 
-public sealed record TaoBangCapSinhVienCommandResult(Guid BangCapId, int TrangThaiBangCapHienTai, int TrangThaiBlockchainHienTai, string MaBangXacThuc);
+public sealed record TaoBangCapSinhVienCommandResult(Guid BangCapId, TrangThaiBangCap TrangThaiBangCapHienTai, TrangThaiBlockchain TrangThaiBlockchainHienTai, string MaBangXacThuc);

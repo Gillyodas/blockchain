@@ -32,5 +32,8 @@ namespace ChainDegree.SharedKernel.QuanLyBangCap.CoSoDaoTao
         //Application errors
         public static readonly Error KhongTimThayCoSoDaoTao =
             Error.NotFound("CoSoDaoTao.KhongTimThayCoSoDaoTao", "Không tìm thấy cơ sở đào tạo");
+
+        public static readonly Error ThatBaiKhiTimKiemCoSoDaoTao =
+            Error.Failure("CoSoDaoTao.ThatBaiKhiTimKiemCoSoDaoTao", "Thất bại khi tìm kiếm cơ sở đào tạo");
     }
 }

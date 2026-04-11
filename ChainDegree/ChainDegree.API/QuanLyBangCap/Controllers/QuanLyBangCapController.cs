@@ -13,12 +13,10 @@ namespace ChainDegree.API.QuanLyBangCap.Controllers;
 public class QuanLyBangCapController : ApiControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<QuanLyBangCapController> _logger;
 
-    public QuanLyBangCapController(IMediator mediator, ILogger<QuanLyBangCapController> logger)
+    public QuanLyBangCapController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
     [HttpPost("{csdt_id}/bang-cap")]
@@ -30,6 +28,7 @@ public class QuanLyBangCapController : ApiControllerBase
             request.CCCD,
             request.TenSinhVien,
             request.LoaiBangCap,
+            request.TenBangCap,
             request.LinhVucId,
             request.Diem,
             request.NgayCap,
@@ -40,6 +39,11 @@ public class QuanLyBangCapController : ApiControllerBase
         );
 
         var result = await _mediator.Send(command, cancellationToken);
+
+        if(result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
 
         return Ok(result);
     }

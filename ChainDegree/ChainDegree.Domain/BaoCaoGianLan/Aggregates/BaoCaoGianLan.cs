@@ -19,6 +19,8 @@ public class BaoCaoGianLan : AggregateRoot
     public DateTime ThoiGianBaoCao { get; private set; }
     public DateTime? ThoiGianCapNhat { get; private set; }
 
+    private BaoCaoGianLan() { }
+
     private BaoCaoGianLan(Guid id, Guid bangCapId, Guid nguoiBaoCaoId, Guid coSoDaoTaoId,
         LoaiNguoiBaoCao loaiNguoiBaoCao, LyDoBaoCaoGianLan lyDo, string? ghiChu)
     {

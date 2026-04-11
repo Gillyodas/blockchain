@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using ChainDegree.Domain.QuanLyBangCap.Enums;
 using FluentValidation;
 
 namespace ChainDegree.Application.QuanLyBangCap.Commands.TaoBangCapChoSinhVienCommand;
@@ -23,7 +24,11 @@ public class TaoBangCapSinhVienCommandValidator : AbstractValidator<TaoBangCapSi
 
         RuleFor(x => x.LoaiBangCap)
             .NotEmpty().WithMessage("Loại bằng cấp không được để trống.")
-            .Must(x => new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99 }.Contains(x)).WithMessage("Loại bằng cấp không hợp lệ.");
+            .IsInEnum().WithMessage("Loại bằng cấp không hợp lệ.");
+
+        RuleFor(x => x.TenBangCap)
+            .NotEmpty().WithMessage("Tên bằng cấp không được để trống.")
+            .MaximumLength(255).WithMessage("Tên bằng cấp không được vượt quá 255 ký tự.");
 
         RuleFor(x => x.LinhVucId)
             .NotEmpty().WithMessage("Lĩnh vực không được để trống.");
@@ -38,6 +43,18 @@ public class TaoBangCapSinhVienCommandValidator : AbstractValidator<TaoBangCapSi
         RuleFor(x => x.CoSoDaoTaoId)
             .NotEmpty().WithMessage("Cơ sở đào tạo không được để trống.");
 
+        RuleFor(x => x.Diem)
+            .NotEmpty().WithMessage("Bảng điểm thì bắt buộc phải có điểm.")
+            .InclusiveBetween(0, 10).WithMessage("Điểm phải nằm trong khoảng từ 0 đến 10.")
+            .When(x => x.LoaiBangCap == LoaiBangCap.BangDiem);
 
+        RuleFor(x => x.Diem)
+            .InclusiveBetween(0, 10).WithMessage("Điểm không hợp lệ.")
+            .When(x => x.Diem.HasValue);
+
+        RuleFor(x => x)
+            .Must(x => !string.IsNullOrWhiteSpace(x.FileBangCap) || !string.IsNullOrWhiteSpace(x.LinkBangCap))
+            .When(x => x.LoaiBangCap != LoaiBangCap.BangDiem)
+            .WithMessage("Bằng cấp phải có tệp đính kèm hoặc đường dẫn liên kết.");
     }
 }

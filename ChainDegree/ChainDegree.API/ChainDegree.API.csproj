@@ -37,12 +37,17 @@
   <ItemGroup>
     <PackageReference Include="ControlHub.Core" Version="1.3.20" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Scalar.AspNetCore" Version="2.13.20" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ChainDegree.Application\ChainDegree.Application.csproj" />
     <ProjectReference Include="..\ChainDegree.Domain\ChainDegree.Domain.csproj" />
+    <ProjectReference Include="..\ChainDegree.Infrastructure\ChainDegree.Infrastructure.csproj" />
     <ProjectReference Include="..\ChainDegree.SharedKernel\ChainDegree.SharedKernel.csproj" />
   </ItemGroup>
 

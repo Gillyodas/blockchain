@@ -1,3 +1,4 @@
+using ChainDegree.Domain.QuanLyBangCap.Entities;
 using ChainDegree.Domain.TuyenDung.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,5 +15,17 @@ public class BangCapUngTuyenConfiguration : IEntityTypeConfiguration<BangCapUngT
 
         builder.Property(b => b.HoSoUngTuyenId).IsRequired();
         builder.Property(b => b.BangCapId).IsRequired();
+
+        builder.HasOne<HoSoUngTuyen>()
+            .WithMany(h => h.BangCapUngTuyens)
+            .HasForeignKey(b => b.HoSoUngTuyenId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<BangCap>()
+            .WithMany()
+            .HasForeignKey(b => b.BangCapId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

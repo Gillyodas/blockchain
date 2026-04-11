@@ -1,3 +1,5 @@
+using ChainDegree.Domain.DanhMuc.Entities;
+using ChainDegree.Domain.QuanLyBangCap.Aggregates;
 using ChainDegree.Domain.QuanLyBangCap.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -44,6 +46,24 @@ public class BangCapConfiguration : IEntityTypeConfiguration<BangCap>
         builder.Property(b => b.CoSoDaoTaoCapId).IsRequired();
         builder.Property(b => b.SinhVienId).IsRequired();
         builder.Property(b => b.LinhVucId).IsRequired();
+
+        builder.HasOne<CoSoDaoTao>()
+            .WithMany()
+            .HasForeignKey(b => b.CoSoDaoTaoCapId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<SinhVien>()
+            .WithMany()
+            .HasForeignKey(b => b.SinhVienId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<LinhVuc>()
+            .WithMany()
+            .HasForeignKey(b => b.LinhVucId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(b => b.MaBamXacThuc).IsUnique().HasFilter("[MaBamXacThuc] IS NOT NULL");
         builder.HasIndex(b => b.CoSoDaoTaoCapId);

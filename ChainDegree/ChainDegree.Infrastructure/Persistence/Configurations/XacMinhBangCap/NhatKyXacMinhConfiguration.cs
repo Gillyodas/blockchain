@@ -1,3 +1,4 @@
+using ChainDegree.Domain.TuyenDung.Aggregates;
 using ChainDegree.Domain.XacMinhBangCap.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,6 +22,12 @@ public class NhatKyXacMinhConfiguration : IEntityTypeConfiguration<NhatKyXacMinh
 
         builder.Property(n => n.KetQuaXacMinh).IsRequired();
         builder.Property(n => n.ThoiGianXacMinh).IsRequired();
+
+        builder.HasOne<NhaTuyenDung>()
+            .WithMany()
+            .HasForeignKey(n => n.NhaTuyenDungId)
+            .IsRequired(false) // nullable
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(n => n.BangCapId);
         builder.HasIndex(n => n.NhaTuyenDungId);
