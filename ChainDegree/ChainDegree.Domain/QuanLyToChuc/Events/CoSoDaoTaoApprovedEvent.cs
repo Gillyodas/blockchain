@@ -1,24 +1,31 @@
 using System;
 using System.Collections.Generic;
+using ChainDegree.Domain.Common.Events;
 using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ControlHub.Domain.SharedKernel;
 
 namespace ChainDegree.Domain.QuanLyToChuc.Events;
 
-public class CoSoDaoTaoApprovedEvent : IDomainEvent
+public class CoSoDaoTaoApprovedEvent : OutboxEvent
 {
-    public Guid YeuCauDangKyId { get; }
-    public Guid TaiKhoanId { get; }
-    public string TenToChuc { get; }
-    public IReadOnlyCollection<GiayPhepCSDT> GiayPhepCSDTs { get; }
-    public DateTime OccurredOn { get; }
+    public Guid YeuCauDangKyId { get; set; }
+    public string DiaChiVi { get; set; } = string.Empty;
+    public string TenToChuc { get; set; } = string.Empty;
 
-    public CoSoDaoTaoApprovedEvent(Guid yeuCauDangKyId, Guid taiKhoanId, string tenToChuc, IReadOnlyCollection<GiayPhepCSDT> giayPhepCSDTs)
-    {
-        YeuCauDangKyId = yeuCauDangKyId;
-        TaiKhoanId = taiKhoanId;
-        TenToChuc = tenToChuc;
-        GiayPhepCSDTs = giayPhepCSDTs;
-        OccurredOn = DateTime.UtcNow;
+    public static CoSoDaoTaoApprovedEvent Create(
+        Guid yeuCauDangKyId,
+        string diaChiVi,
+        string tenToChuc,
+        List<string> danhSachDiaChiViDaDuyet)
+    { 
+        var @event = new CoSoDaoTaoApprovedEvent
+        {
+            YeuCauDangKyId = yeuCauDangKyId,
+            DiaChiVi = diaChiVi,
+            TenToChuc = tenToChuc,
+            EventType = "CoSoDaoTaoApprovedEvent",
+        };
+        @event.SetPayload(danhSachDiaChiViDaDuyet);
+        return @event;
     }
 }

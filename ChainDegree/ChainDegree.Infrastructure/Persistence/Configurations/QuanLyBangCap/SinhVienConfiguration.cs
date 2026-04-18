@@ -7,6 +7,7 @@ namespace ChainDegree.Infrastructure.Persistence.Configurations.QuanLyBangCap;
 
 public class SinhVienConfiguration : IEntityTypeConfiguration<SinhVien>
 {
+    [Obsolete]
     public void Configure(EntityTypeBuilder<SinhVien> builder)
     {
         builder.ToTable("SinhVien");

@@ -10,7 +10,7 @@ public class KetQuaPhanTich
     public Guid ThongTinTuyenDungId { get; private set; }
     public Guid HoSoUngTuyenId { get; private set; }
     public double PhanTramPhuHop { get; private set; }
-    public string KetLuan { get; private set; }
+    public string KetLuan { get; private set; } =null!;
     public DateTime ThoiGianPhanTich { get; private set; }
 
     private KetQuaPhanTich() { }

@@ -1,5 +1,5 @@
 using ChainDegree.API.QuanLyBangCap.Request;
-using ChainDegree.Application.QuanLyBangCap.Commands.TaoBangCapChoSinhVienCommand;
+using ChainDegree.Application.QuanLyBangCap.Commands.TaoBangCapChoSinhVien;
 using ControlHub.API.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

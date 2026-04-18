@@ -3,6 +3,7 @@ using ChainDegree.Domain.DanhMuc.Entities;
 using ChainDegree.Domain.QuanLyBangCap.Aggregates;
 using ChainDegree.Domain.QuanLyBangCap.Entities;
 using ChainDegree.Domain.QuanLyToChuc.Aggregates;
+using ChainDegree.Domain.QuanLyToChuc.Events;
 using ChainDegree.Domain.TuyenDung.Aggregates;
 using ChainDegree.Domain.TuyenDung.Entities;
 using ChainDegree.Domain.XacMinhBangCap.Aggregates;
@@ -40,6 +41,9 @@ public class ChainDegreeDbContext : DbContext
 
     // DanhMuc
     public DbSet<LinhVuc> LinhVucs { get; set; } = default!;
+
+    // Events
+    public DbSet<CoSoDaoTaoApprovedEvent> CoSoDaoTaoApprovedEvents { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

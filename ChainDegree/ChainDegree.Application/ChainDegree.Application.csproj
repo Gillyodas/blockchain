@@ -52,8 +52,7 @@
     <Folder Include="BaoCaoGianLan\Interfaces\Repositories\" />
     <Folder Include="BaoCaoGianLan\Queries\" />
     <Folder Include="QuanLyBangCap\Queries\" />
-    <Folder Include="QuanLyToChuc\Interfaces\Repositories\" />
-    <Folder Include="QuanLyToChuc\Commands\" />
+    <Folder Include="QuanLyToChuc\Commands\TuChoiDangKyToChuc\" />
     <Folder Include="QuanLyToChuc\Queries\" />
     <Folder Include="TuyenDung\Commands\" />
     <Folder Include="TuyenDung\Interfaces\Repositories\" />

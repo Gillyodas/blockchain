@@ -12,6 +12,9 @@
 
   <ItemGroup>
     <Folder Include="Common\ValueObjects\" />
+    <Folder Include="QuanLyToChuc\Interfaces\" />
+    <Folder Include="QuanLyToChuc\Services\" />
+    <Folder Include="TuyenDung\ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>

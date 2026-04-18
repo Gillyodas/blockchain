@@ -7,8 +7,8 @@ namespace ChainDegree.Domain.TuyenDung.Entities;
 public class ThongTinTuyenDung
 {
     public Guid Id { get; private set; }
-    public string Ten { get; private set; }
-    public string MoTa { get; private set; }
+    public string Ten { get; private set; } = null!;
+    public string MoTa { get; private set; } = null!;
     public Guid LinhVucId { get; private set; }
     public DateTime ThoiHanUngTuyen { get; private set; }
     public Guid NhaTuyenDungId { get; private set; }

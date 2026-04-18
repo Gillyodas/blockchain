@@ -3,7 +3,7 @@ namespace ChainDegree.Domain.DanhMuc.Entities;
 public class LinhVuc
 {
     public Guid Id { get; private set; }
-    public string Ten { get; private set; }
+    public string Ten { get; private set; } = null!;
     public DateTime ThoiGianTao { get; private set; }
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }

@@ -8,7 +8,7 @@ public class ThongTinChuKySo : ValueObject
 {
     public bool CoChuKySo { get; private set; }
     public bool HopLe { get; private set; }
-    public string NhaCungCap { get; private set; }
+    public string NhaCungCap { get; private set; } = string.Empty;
     public bool NhaCungCapDuocTinTuong { get; private set; }
     public DateTime NgayHetHan { get; private set; }
     public DateTime XacMinhLuc { get; private set; }

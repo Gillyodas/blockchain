@@ -9,7 +9,7 @@ namespace ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 
 public class GiayPhepCSDT : ValueObject
 {
-    public string DuongDanLuuTru { get; private set; }
+    public string DuongDanLuuTru { get; private set; } = null!;
     public LoaiGiayPhepCSDT LoaiGiayPhep { get; private set; }
     public TrangThaiXacMinh TrangThai { get; private set; } = TrangThaiXacMinh.ChoXacMinh;
     public DateTime ThoiGianTaiLen { get; private set; } = DateTime.UtcNow;

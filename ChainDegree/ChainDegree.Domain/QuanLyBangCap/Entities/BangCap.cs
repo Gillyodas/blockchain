@@ -7,7 +7,7 @@ namespace ChainDegree.Domain.QuanLyBangCap.Entities;
 public class BangCap
 {
     public Guid Id { get; private set; }
-    public string Ten { get; private set; }
+    public string Ten { get; private set; } = null!;
     public string? File { get; private set; }
     public double? Diem { get; private set; }
     public string? Link { get; private set; }

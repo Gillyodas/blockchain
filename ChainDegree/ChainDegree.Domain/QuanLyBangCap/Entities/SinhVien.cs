@@ -12,10 +12,10 @@ namespace ChainDegree.Domain.QuanLyBangCap.Entities;
 public class SinhVien
 {
     public Guid Id { get; private set; }
-    public string Ten { get; private set; }
-    public string CCCD { get; private set; }
-    public Email Email { get; private set; }
-    public string DiaChiViSinhVien { get; private set; }
+    public string Ten { get; private set; } = null!;
+    public string CCCD { get; private set; } = null!;
+    public Email Email { get; private set; } = null!;
+    public string DiaChiViSinhVien { get; private set; } = null!;
     public Guid TKId { get; private set; }
     public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
     public DateTime? ThoiGianCapNhat { get; private set; }

@@ -10,31 +10,29 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
     public class CoSoDaoTao
     {
         public Guid Id { get; private set; }
-        public string Ten { get; private set; }
-        public string DiaChiViCSDT { get; private set; }
-        public Guid TKId { get; private set; }
+        public string Ten { get; private set; } = null!;
+        public string DiaChiViCSDT { get; private set; } = null!;
+        public Guid? TKId { get; private set; }
         public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
         public DateTime? ThoiGianCapNhat { get; private set; }
         public DateTime? ThoiGianXoa { get; private set; }
         private readonly List<GiayPhepCSDT> _danhSachGiayPhepCSDT = new();
         public IReadOnlyCollection<GiayPhepCSDT> DanhSachGiayPhepCSDT
             => _danhSachGiayPhepCSDT.AsReadOnly();
-        public UyTinToChuc UyTin { get; private set; }
+        public UyTinToChuc UyTin { get; private set; } = null!;
 
         private CoSoDaoTao() { }
 
-        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT,
-            Guid tkId, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin)
+        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin)
         {
             Id = id;
             Ten = ten;
             DiaChiViCSDT = diaChiViCSDT;
-            TKId = tkId;
             _danhSachGiayPhepCSDT = new List<GiayPhepCSDT>(danhSachGiayPhepCSDT); ;
             UyTin = uyTin;
         }
 
-        public static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT, Guid tkId,
+        public static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT,
             List<GiayPhepCSDT> danhSachGiayPhepCSDT)
         {
             // Ít nhất phải có 2 giấy phép: Giấy phép hoạt động giáo dục và Quyết định thành lập trường
@@ -48,7 +46,7 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
 
             UyTinToChuc uyTinKhoiTao = UyTinToChuc.KhoiTao(danhSachGiayPhepCSDT.Count());
 
-            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, tkId, danhSachGiayPhepCSDT, uyTinKhoiTao);
+            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, danhSachGiayPhepCSDT, uyTinKhoiTao);
 
             return Result<CoSoDaoTao>.Success(csdt);
         }

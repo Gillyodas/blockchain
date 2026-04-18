@@ -5,7 +5,7 @@ using ChainDegree.Domain.QuanLyBangCap.Enums;
 using ControlHub.SharedKernel.Results;
 using MediatR;
 
-namespace ChainDegree.Application.QuanLyBangCap.Commands.TaoBangCapChoSinhVienCommand;
+namespace ChainDegree.Application.QuanLyBangCap.Commands.TaoBangCapChoSinhVien;
 
 public sealed record TaoBangCapSinhVienCommand(
     Guid? SinhVienId,

@@ -11,7 +11,7 @@ namespace ChainDegree.Domain.XacMinhBangCap.Aggregates
         public Guid BangCapId { get; private set; }
         public Guid? NhaTuyenDungId { get; private set; }
         public DateTime ThoiGianXacMinh { get; private set; }
-        public string MaBamXacMinh { get; private set; }
+        public string MaBamXacMinh { get; private set; } =null!;
         public KetQuaXacMinh KetQuaXacMinh { get; private set; }
 
         private NhatKyXacMinh() { } 

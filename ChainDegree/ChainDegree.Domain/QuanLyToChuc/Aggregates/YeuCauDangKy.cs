@@ -12,21 +12,27 @@ namespace ChainDegree.Domain.QuanLyToChuc.Aggregates;
 public class YeuCauDangKy : AggregateRoot
 {
     public Guid Id { get; private set; }
-    public string TenToChuc { get; private set; }
+    public string TenToChuc { get; private set; } = null!;
     public Guid TaiKhoanId { get; private set; }
     public LoaiToChuc Loai { get; private set; }
     public TrangThaiYeuCauDangKy TrangThai { get; private set; }
     public DateTime ThoiGianTao { get; private set; }
     public DateTime? ThoiGianNop { get; private set; }
     public DateTime? ThoiGianXetDuyet { get; private set; }
+    public string DiaChiVi { get; private set; } = null!;
 
     public LyDoTuChoi? LyDo { get; private set; }
     public string? GhiChuTuChoi { get; private set; }
     public string? GhiChuDuyet { get; private set; }
 
+    private readonly List<GiayPhepCSDT> _giayPhepCSDTs = new();
+    public IReadOnlyCollection<GiayPhepCSDT> GiayPhepCSDTs => _giayPhepCSDTs.AsReadOnly();
+    private readonly List<GiayPhepNhaTuyenDung> _giayPhepNTDs = new();
+    public IReadOnlyCollection<GiayPhepNhaTuyenDung> GiayPhepNTDs => _giayPhepNTDs.AsReadOnly();
+
     private YeuCauDangKy() { }
 
-    private YeuCauDangKy(Guid id, string tenToChuc, LoaiToChuc loai, Guid tkId, TrangThaiYeuCauDangKy trangThai)
+    private YeuCauDangKy(Guid id, string tenToChuc, LoaiToChuc loai, Guid tkId, TrangThaiYeuCauDangKy trangThai, string diaChiVi)
     {
         Id = id;
         TenToChuc = tenToChuc;
@@ -34,9 +40,10 @@ public class YeuCauDangKy : AggregateRoot
         TaiKhoanId = tkId;
         TrangThai = trangThai;
         ThoiGianTao = DateTime.UtcNow;
+        DiaChiVi = diaChiVi;
     }
 
-    public static Result<YeuCauDangKy> Create(string tenToChuc, LoaiToChuc loai, Guid taiKhoanId)
+    public static Result<YeuCauDangKy> Create(string tenToChuc, LoaiToChuc loai, Guid taiKhoanId, string diaChiVi)
     {
         if (string.IsNullOrWhiteSpace(tenToChuc))
             return Result<YeuCauDangKy>.Failure(QuanLyToChucError.TenToChucTrong);
@@ -44,14 +51,16 @@ public class YeuCauDangKy : AggregateRoot
             tenToChuc,
             loai,
             taiKhoanId,
-            TrangThaiYeuCauDangKy.Nhap);
+            TrangThaiYeuCauDangKy.Nhap,
+            diaChiVi);
         return Result<YeuCauDangKy>.Success(request);
     }
 
-    private readonly List<GiayPhepCSDT> _giayPhepCSDTs = new();
-    public IReadOnlyCollection<GiayPhepCSDT> GiayPhepCSDTs => _giayPhepCSDTs.AsReadOnly();
-    private readonly List<GiayPhepNhaTuyenDung> _giayPhepNTDs = new();
-    public IReadOnlyCollection<GiayPhepNhaTuyenDung> GiayPhepNTDs => _giayPhepNTDs.AsReadOnly();
+    public Result ThemDiaChiVi(string diaChiVi)
+    {
+        this.DiaChiVi = diaChiVi;
+        return Result.Success();
+    }
 
     public Result ThemGiayPhep(string duongDanLuuTru, LoaiGiayPhepCSDT loai, DateTime thoiGianHetHan)
     {
@@ -121,7 +130,6 @@ public class YeuCauDangKy : AggregateRoot
         return Result.Success();
     }
 
-    // THÊM: Logic Admin Từ chối
     public Result AdminTuChoi(LyDoTuChoi lyDo, string ghiChu)
     {
         if (TrangThai != TrangThaiYeuCauDangKy.DaGui)
@@ -138,20 +146,19 @@ public class YeuCauDangKy : AggregateRoot
         return Result.Success();
     }
 
-    // THÊM: Logic Admin Duyệt
     public Result AdminDuyet(string? ghiChu)
     {
         if (TrangThai != TrangThaiYeuCauDangKy.DaGui)
             return Result.Failure(QuanLyToChucError.HoSoKhongTheXetDuyet);
 
+        if (string.IsNullOrWhiteSpace(DiaChiVi))
+        {
+            return Result.Failure(QuanLyToChucError.ThieuDiaChiVi);
+        }
+
         TrangThai = TrangThaiYeuCauDangKy.XacNhan;
         GhiChuDuyet = ghiChu;
         ThoiGianXetDuyet = DateTime.UtcNow;
-
-        if (Loai == LoaiToChuc.Issuer)
-            RaiseDomainEvent(new Events.CoSoDaoTaoApprovedEvent(Id, TaiKhoanId, TenToChuc, _giayPhepCSDTs.ToList()));
-        else
-            RaiseDomainEvent(new Events.NhaTuyenDungApprovedEvent(Id, TaiKhoanId, TenToChuc, _giayPhepNTDs.ToList()));
 
         return Result.Success();
     }

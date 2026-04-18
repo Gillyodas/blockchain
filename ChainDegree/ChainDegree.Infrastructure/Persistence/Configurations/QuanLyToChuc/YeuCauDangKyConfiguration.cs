@@ -6,6 +6,7 @@ namespace ChainDegree.Infrastructure.Persistence.Configurations.QuanLyToChuc;
 
 public class YeuCauDangKyConfiguration : IEntityTypeConfiguration<YeuCauDangKy>
 {
+    [Obsolete]
     public void Configure(EntityTypeBuilder<YeuCauDangKy> builder)
     {
         builder.ToTable("YeuCauDangKy");
@@ -25,7 +26,9 @@ public class YeuCauDangKyConfiguration : IEntityTypeConfiguration<YeuCauDangKy>
         builder.Property(y => y.LyDo);         // nullable enum
         builder.Property(y => y.GhiChuTuChoi).HasMaxLength(1024);
         builder.Property(y => y.GhiChuDuyet).HasMaxLength(1024);
+        builder.Property(y => y.DiaChiVi).HasMaxLength(512).IsRequired();
 
+        builder.HasIndex(y => y.DiaChiVi).HasName("IX_YeuCauDangKy_DiaChiVi");
         builder.HasIndex(y => y.TaiKhoanId).HasName("IX_YeuCauDangKy_TaiKhoanId");
 
         // Owned collection: GiayPhepCSDT của YeuCauDangKy — bảng riêng

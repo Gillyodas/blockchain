@@ -9,6 +9,8 @@ namespace ChainDegree.Application.QuanLyBangCap.Interfaces.Repositories;
 
 public interface ICoSoDaoTaoRepository
 {
+    Task AddAsync(CoSoDaoTao coSoDaoTao, CancellationToken cancellationToken);
     Task<CoSoDaoTao?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<bool> TrungLapKhiCapBangChoSinhVien(Guid csdtId,Guid sinhVienId, LoaiBangCap loaiBangCap, Guid linhVucId, CancellationToken cancellationToken);
+    Task<List<CoSoDaoTao>> GetAllAsync(CancellationToken cancellationToken);
 }

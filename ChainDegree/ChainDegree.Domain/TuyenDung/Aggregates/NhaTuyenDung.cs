@@ -1,8 +1,8 @@
 using ChainDegree.Domain.BaoCaoGianLan.Enums;
 using ChainDegree.Domain.QuanLyToChuc.Enums;
+using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ChainDegree.Domain.TuyenDung.Entities;
 using ChainDegree.Domain.TuyenDung.Enums;
-using ChainDegree.Domain.TuyenDung.ValueObjects;
 using ChainDegree.SharedKernel.TuyenDung;
 using ControlHub.SharedKernel.Results;
 
@@ -10,38 +10,39 @@ namespace ChainDegree.Domain.TuyenDung.Aggregates;
 
 public class NhaTuyenDung
 {
-    private readonly List<ThongTinTuyenDung> _thongTinTuyenDungs = new();
-    private readonly List<GiayPhepNhaTuyenDung> _giayPheps = new();
-
     public Guid Id { get; private set; }
-    public string Ten { get; private set; }
-    public string DiaChi { get; private set; }
-    public string DiaChiViNhaTuyenDung { get; private set; }
+    public string Ten { get; private set; } = null!;
+    public string DiaChi { get; private set; } = null!;
+    public string DiaChiViNhaTuyenDung { get; private set; } = null!;
     public Guid TaiKhoanId { get; private set; }
     public Guid YeuCauDangKyId { get; private set; }
-    public DateTime ThoiGianTao { get; private set; }
+    public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
     public DateTime? ThoiGianCapNhat { get; private set; }
     public DateTime? ThoiGianXoa { get; private set; }
 
+    private readonly List<ThongTinTuyenDung> _thongTinTuyenDungs = new();
+    public IReadOnlyCollection<ThongTinTuyenDung> ThongTinTuyenDungs => _thongTinTuyenDungs.AsReadOnly();
+    private readonly List<GiayPhepNhaTuyenDung> _giayPheps = new();
+    public IReadOnlyCollection<GiayPhepNhaTuyenDung> GiayPheps => _giayPheps.AsReadOnly();
+
     private NhaTuyenDung() { }
 
-    private NhaTuyenDung(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, DateTime thoiGianTao)
+    private NhaTuyenDung(Guid id, string ten, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, List<GiayPhepNhaTuyenDung> danhSachGiayPhepNTD)
     {
         Id = id; 
         Ten = ten; 
-        DiaChi = diaChi; 
         DiaChiViNhaTuyenDung = diaChiViNhaTuyenDung; 
         TaiKhoanId = taiKhoanId; 
         YeuCauDangKyId = yeuCauDangKyId;
-        ThoiGianTao = thoiGianTao;
+        _giayPheps = new List<GiayPhepNhaTuyenDung>(danhSachGiayPhepNTD);
     }
 
-    public static Result<NhaTuyenDung> Create(Guid id, string ten, string diaChi, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId)
+    public static Result<NhaTuyenDung> Create(string ten, string diaChiViNhaTuyenDung, Guid taiKhoanId, Guid yeuCauDangKyId, List<GiayPhepNhaTuyenDung> danhSachGiayPhepNTD)
     {
         if (string.IsNullOrWhiteSpace(ten))
             return Result<NhaTuyenDung>.Failure(TuyenDungError.TenNhaTuyenDungTrong);
 
-        return Result<NhaTuyenDung>.Success(new NhaTuyenDung(id, ten, diaChi, diaChiViNhaTuyenDung, taiKhoanId, yeuCauDangKyId, DateTime.UtcNow));
+        return Result<NhaTuyenDung>.Success(new NhaTuyenDung(Guid.NewGuid(), ten, diaChiViNhaTuyenDung, taiKhoanId, yeuCauDangKyId, danhSachGiayPhepNTD));
     }
 
     public Result CapNhatThongTinNhaTuyenDung(string ten, string diaChi)
@@ -90,9 +91,9 @@ public class NhaTuyenDung
         return result;
     }
 
-    public Result ThemGiayPhep(string duongDan, KieuGiayPhepNTD kieu)
+    public Result ThemGiayPhep(string duongDan, LoaiGiayPhepNTD loai)
     {
-        var result = GiayPhepNhaTuyenDung.Create(duongDan, kieu);
+        var result = GiayPhepNhaTuyenDung.Create(duongDan, loai);
         if (result.IsSuccess)
         {
             _giayPheps.Add(result.Value);
@@ -100,14 +101,14 @@ public class NhaTuyenDung
         }
         return result;
     }
-    public Result CapNhatGiayPhep(string oldPath, string newPath, KieuGiayPhepNTD kieu)
+    public Result CapNhatGiayPhep(string oldPath, string newPath, LoaiGiayPhepNTD loai)
     {
         var gp = _giayPheps.FirstOrDefault(x => x.DuongDanLuuTru == oldPath);
         if (gp == null)
             return Result.Failure(TuyenDungError.GiayPhepKhongTonTai);
 
         _giayPheps.Remove(gp);
-        var result = GiayPhepNhaTuyenDung.Create(newPath, kieu);
+        var result = GiayPhepNhaTuyenDung.Create(newPath, loai);
         if (result.IsSuccess)
         {
             _giayPheps.Add(result.Value);

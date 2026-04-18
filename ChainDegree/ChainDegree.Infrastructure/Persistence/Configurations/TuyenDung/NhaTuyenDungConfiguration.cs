@@ -1,3 +1,4 @@
+using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ChainDegree.Domain.TuyenDung.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -32,7 +33,7 @@ public class NhaTuyenDungConfiguration : IEntityTypeConfiguration<NhaTuyenDung>
         builder.Property(n => n.ThoiGianXoa); // soft delete
 
         // Owned collection: GiayPhepNhaTuyenDung — private field, không có public property
-        builder.OwnsMany<Domain.TuyenDung.ValueObjects.GiayPhepNhaTuyenDung>("_giayPheps", giayPhep =>
+        builder.OwnsMany<GiayPhepNhaTuyenDung>("_giayPheps", giayPhep =>
         {
             giayPhep.ToTable("NhaTuyenDung_GiayPhepNTD");
             giayPhep.WithOwner().HasForeignKey("NhaTuyenDungId");
@@ -41,7 +42,7 @@ public class NhaTuyenDungConfiguration : IEntityTypeConfiguration<NhaTuyenDung>
             giayPhep.HasKey("Id");
 
             giayPhep.Property(g => g.DuongDanLuuTru).HasMaxLength(1024).IsRequired();
-            giayPhep.Property(g => g.KieuGiayPhep).IsRequired();
+            giayPhep.Property(g => g.LoaiGiayPhep).IsRequired();
             giayPhep.Property(g => g.ThoiGianTaiLen).IsRequired();
             giayPhep.Property(g => g.ThoiGianDuocXacMinh);
             giayPhep.Property(g => g.XacMinhBoiAdminId);

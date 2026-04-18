@@ -15,6 +15,16 @@ public class CoSoDaoTaoRepository : ICoSoDaoTaoRepository
         _db = db;
     }
 
+    public async Task AddAsync(CoSoDaoTao coSoDaoTao, CancellationToken cancellationToken)
+    {
+        await _db.CoSoDaoTaos.AddAsync(coSoDaoTao, cancellationToken);
+    }
+
+    public Task<List<CoSoDaoTao>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<CoSoDaoTao?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         CoSoDaoTao? csdt = await _db.CoSoDaoTaos.FindAsync(id, cancellationToken);

@@ -5,12 +5,14 @@ using ControlHub;
 using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Formatting.Compact;
+using ChainDegree.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChainDegree.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
@@ -36,7 +38,10 @@ namespace ChainDegree.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilterAttribute>();
+            });
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
@@ -56,6 +61,15 @@ namespace ChainDegree.API
             builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider
+                    .GetRequiredService<ChainDegreeDbContext>();
+
+                // ✅ Apply migrations
+                await context.Database.MigrateAsync();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
