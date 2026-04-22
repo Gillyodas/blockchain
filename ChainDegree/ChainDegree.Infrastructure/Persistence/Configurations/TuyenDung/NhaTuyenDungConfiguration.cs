@@ -1,5 +1,8 @@
+using ChainDegree.Domain.QuanLyBangCap.Aggregates;
+using ChainDegree.Domain.QuanLyToChuc.Aggregates;
 using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ChainDegree.Domain.TuyenDung.Aggregates;
+using ChainDegree.Domain.TuyenDung.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,8 +35,14 @@ public class NhaTuyenDungConfiguration : IEntityTypeConfiguration<NhaTuyenDung>
         builder.Property(n => n.ThoiGianCapNhat);
         builder.Property(n => n.ThoiGianXoa); // soft delete
 
+        builder.HasOne<YeuCauDangKy>()
+            .WithOne()
+            .HasForeignKey<NhaTuyenDung>("YeuCauDangKyId")
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Owned collection: GiayPhepNhaTuyenDung — private field, không có public property
-        builder.OwnsMany<GiayPhepNhaTuyenDung>("_giayPheps", giayPhep =>
+        builder.OwnsMany(n => n.GiayPheps, giayPhep =>  // ← Use property name
         {
             giayPhep.ToTable("NhaTuyenDung_GiayPhepNTD");
             giayPhep.WithOwner().HasForeignKey("NhaTuyenDungId");
@@ -50,10 +59,9 @@ public class NhaTuyenDungConfiguration : IEntityTypeConfiguration<NhaTuyenDung>
 
         // Relationship: ThongTinTuyenDung — private backing field, không có public property
         // EF dùng tên field "_thongTinTuyenDungs" để populate collection khi load aggregate từ DB
-        builder.HasMany<Domain.TuyenDung.Entities.ThongTinTuyenDung>("_thongTinTuyenDungs")
+        builder.HasMany(n => n.ThongTinTuyenDungs)
             .WithOne()
             .HasForeignKey(t => t.NhaTuyenDungId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

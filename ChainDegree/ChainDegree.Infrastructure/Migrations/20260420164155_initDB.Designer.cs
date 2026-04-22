@@ -4,6 +4,7 @@ using ChainDegree.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChainDegree.Infrastructure.Migrations
 {
     [DbContext(typeof(ChainDegreeDbContext))]
-    partial class ChainDegreeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260420164155_initDB")]
+    partial class initDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +112,8 @@ namespace ChainDegree.Infrastructure.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<Guid>("TKId")
+                    b.Property<Guid?>("TKId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TaiKhoanId");
 
@@ -359,7 +363,7 @@ namespace ChainDegree.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2026, 4, 21, 8, 9, 16, 209, DateTimeKind.Utc).AddTicks(5032));
+                        .HasDefaultValue(new DateTime(2026, 4, 20, 16, 41, 55, 559, DateTimeKind.Utc).AddTicks(2626));
 
                     b.Property<string>("DiaChiVi")
                         .IsRequired()
@@ -441,9 +445,6 @@ namespace ChainDegree.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("YeuCauDangKyId")
-                        .IsUnique();
 
                     b.ToTable("NhaTuyenDung", (string)null);
                 });
@@ -909,12 +910,6 @@ namespace ChainDegree.Infrastructure.Migrations
 
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", b =>
                 {
-                    b.HasOne("ChainDegree.Domain.QuanLyToChuc.Aggregates.YeuCauDangKy", null)
-                        .WithOne()
-                        .HasForeignKey("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", "YeuCauDangKyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.OwnsMany("ChainDegree.Domain.QuanLyToChuc.ValueObjects.GiayPhepNhaTuyenDung", "GiayPheps", b1 =>
                         {
                             b1.Property<int>("Id")

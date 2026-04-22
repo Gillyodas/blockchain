@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ChainDegree.Domain.Common.Events;
+using ChainDegree.Domain.Messaging.Events;
 using ChainDegree.Domain.QuanLyToChuc.ValueObjects;
 using ControlHub.Domain.SharedKernel;
 

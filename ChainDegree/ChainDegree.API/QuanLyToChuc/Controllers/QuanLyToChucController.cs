@@ -1,6 +1,7 @@
 using ChainDegree.API.QuanLyToChuc.Request;
 using ChainDegree.Application.QuanLyToChuc.Commands.DangKyToChuc;
 using ChainDegree.Application.QuanLyToChuc.Commands.DuyetDangKyCSDT;
+using ChainDegree.Application.QuanLyToChuc.Commands.DuyetDangKyNTD;
 using ControlHub.API.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,8 @@ public class QuanLyToChucController : ApiControllerBase
         (
             request.TenToChuc,
             request.LoaiToChucDangKy,
-            tk_id,
-            request.DiaChiVi
+            request.DiaChiVi,
+            tk_id
         );
         var result = await _mediator.Send(command, cancellationToken);
         if (result.IsFailure)
@@ -38,12 +39,28 @@ public class QuanLyToChucController : ApiControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{yeuCauDangKyId}/duyet")]
-    public async Task<IActionResult> DuyetDangKyCSDT(Guid yeuCauDangKyId, DuyetDangKyCSDTRequest request, CancellationToken cancellationToken)
+    [HttpPut("{yeuCauDangKyCSDTId}/duyet")]
+    public async Task<IActionResult> DuyetDangKyCSDT(Guid yeuCauDangKyCSDTId, DuyetDangKyCSDTRequest request, CancellationToken cancellationToken)
     {
         var command = new DuyetDangKyCSDTCommand
         (
-            yeuCauDangKyId,
+            yeuCauDangKyCSDTId,
+            request.GhiChu
+        );
+        var result = await _mediator.Send(command, cancellationToken);
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+        return Ok(result);
+    }
+
+    [HttpPut("{yeuCauDangKyNTDId}/tu-choi")]
+    public async Task<IActionResult> DuyetDangKyNTD(Guid yeuCauDangKyNTDId, DuyetDangKyNTDRequest request, CancellationToken cancellationToken)
+    {
+        var command = new DuyetDangKyNTDCommand
+        (
+            yeuCauDangKyNTDId,
             request.GhiChu
         );
         var result = await _mediator.Send(command, cancellationToken);

@@ -20,9 +20,11 @@ public class CoSoDaoTaoRepository : ICoSoDaoTaoRepository
         await _db.CoSoDaoTaos.AddAsync(coSoDaoTao, cancellationToken);
     }
 
-    public Task<List<CoSoDaoTao>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<string?>> GetAllAddressWalletAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _db.CoSoDaoTaos
+            .Select(csdt => (string?)csdt.DiaChiViCSDT)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<CoSoDaoTao?> GetByIdAsync(Guid id, CancellationToken cancellationToken)

@@ -26,13 +26,11 @@ public class CoSoDaoTaoConfiguration : IEntityTypeConfiguration<CoSoDaoTao>
             .HasColumnName("TaiKhoanId")
             .IsRequired();
 
+        builder.Property(c => c.YeuCauDangKyId).IsRequired();
+
         builder.Property(c => c.ThoiGianTao).IsRequired();
         builder.Property(c => c.ThoiGianCapNhat);
         builder.Property(c => c.ThoiGianXoa); // soft delete
-
-        // Shadow property — truy vết YeuCauDangKy nguồn gốc (spec 2.1 bước 7a)
-        // Không thuộc domain model, set bởi Application handler khi xử lý CoSoDaoTaoApprovedEvent
-        builder.Property<Guid>("YeuCauDangKyId").IsRequired();
 
         builder.HasOne<YeuCauDangKy>()
             .WithOne()

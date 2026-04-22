@@ -5,4 +5,4 @@ using MediatR;
 
 namespace ChainDegree.Application.QuanLyToChuc.Commands.DangKyToChuc;
 
-public sealed record DangKyToChucCommand(string TenToChuc, LoaiToChuc LoaiToChucDangKy, Guid TkId, string DiaChiVi) : IRequest<Result<Guid>>;
+public sealed record DangKyToChucCommand(string TenToChuc, LoaiToChuc LoaiToChucDangKy, string DiaChiVi, Guid TkId) : IRequest<Result<Guid>>;

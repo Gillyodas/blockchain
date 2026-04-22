@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChainDegree.Infrastructure.Migrations
 {
     [DbContext(typeof(ChainDegreeDbContext))]
-    [Migration("20260411120512_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260421080917_updateForeignKeyCSDT_NTD")]
+    partial class updateForeignKeyCSDT_NTD
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,8 @@ namespace ChainDegree.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BangCapId");
+
+                    b.HasIndex("CoSoDaoTaoId");
 
                     b.HasIndex("NguoiBaoCaoId");
 
@@ -132,6 +134,9 @@ namespace ChainDegree.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("YeuCauDangKyId")
+                        .IsUnique();
 
                     b.ToTable("CoSoDaoTao", (string)null);
                 });
@@ -228,6 +233,8 @@ namespace ChainDegree.Infrastructure.Migrations
 
                     b.HasIndex("CoSoDaoTaoCapId");
 
+                    b.HasIndex("LinhVucId");
+
                     b.HasIndex("MaBamXacThuc")
                         .IsUnique()
                         .HasFilter("[MaBamXacThuc] IS NOT NULL");
@@ -282,6 +289,9 @@ namespace ChainDegree.Infrastructure.Migrations
                     b.HasIndex("CCCD")
                         .IsUnique();
 
+                    b.HasIndex("TKId")
+                        .HasDatabaseName("IX_SinhVien_TaiKhoanId");
+
                     b.ToTable("SinhVien", (string)null);
                 });
 
@@ -290,6 +300,11 @@ namespace ChainDegree.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DiaChiVi")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("GhiChuDuyet")
                         .HasMaxLength(1024)
@@ -327,7 +342,69 @@ namespace ChainDegree.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DiaChiVi")
+                        .HasDatabaseName("IX_YeuCauDangKy_DiaChiVi");
+
+                    b.HasIndex("TaiKhoanId")
+                        .HasDatabaseName("IX_YeuCauDangKy_TaiKhoanId");
+
                     b.ToTable("YeuCauDangKy", (string)null);
+                });
+
+            modelBuilder.Entity("ChainDegree.Domain.QuanLyToChuc.Events.CoSoDaoTaoApprovedEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2026, 4, 21, 8, 9, 16, 209, DateTimeKind.Utc).AddTicks(5032));
+
+                    b.Property<string>("DiaChiVi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsProcessed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RetryCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("TenToChuc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("YeuCauDangKyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsProcessed", "CreatedAt")
+                        .HasDatabaseName("IX_UnprocessedEvents");
+
+                    b.ToTable("CoSoDaoTaoApprovedEvents");
                 });
 
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", b =>
@@ -368,6 +445,9 @@ namespace ChainDegree.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("YeuCauDangKyId")
+                        .IsUnique();
+
                     b.ToTable("NhaTuyenDung", (string)null);
                 });
 
@@ -380,6 +460,8 @@ namespace ChainDegree.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("HoSoUngTuyenId", "BangCapId");
+
+                    b.HasIndex("BangCapId");
 
                     b.ToTable("BangCapUngTuyen", (string)null);
                 });
@@ -409,6 +491,8 @@ namespace ChainDegree.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ThongTinTuyenDungId");
 
                     b.HasIndex("SinhVienId", "ThongTinTuyenDungId")
                         .IsUnique()
@@ -523,8 +607,23 @@ namespace ChainDegree.Infrastructure.Migrations
                     b.ToTable("NhatKyXacMinh", (string)null);
                 });
 
+            modelBuilder.Entity("ChainDegree.Domain.BaoCaoGianLan.Aggregates.BaoCaoGianLan", b =>
+                {
+                    b.HasOne("ChainDegree.Domain.QuanLyBangCap.Aggregates.CoSoDaoTao", null)
+                        .WithMany()
+                        .HasForeignKey("CoSoDaoTaoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChainDegree.Domain.QuanLyBangCap.Aggregates.CoSoDaoTao", b =>
                 {
+                    b.HasOne("ChainDegree.Domain.QuanLyToChuc.Aggregates.YeuCauDangKy", null)
+                        .WithOne()
+                        .HasForeignKey("ChainDegree.Domain.QuanLyBangCap.Aggregates.CoSoDaoTao", "YeuCauDangKyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsMany("ChainDegree.Domain.QuanLyToChuc.ValueObjects.GiayPhepCSDT", "DanhSachGiayPhepCSDT", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -657,6 +756,27 @@ namespace ChainDegree.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChainDegree.Domain.QuanLyBangCap.Entities.BangCap", b =>
+                {
+                    b.HasOne("ChainDegree.Domain.QuanLyBangCap.Aggregates.CoSoDaoTao", null)
+                        .WithMany()
+                        .HasForeignKey("CoSoDaoTaoCapId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChainDegree.Domain.DanhMuc.Entities.LinhVuc", null)
+                        .WithMany()
+                        .HasForeignKey("LinhVucId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChainDegree.Domain.QuanLyBangCap.Entities.SinhVien", null)
+                        .WithMany()
+                        .HasForeignKey("SinhVienId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChainDegree.Domain.QuanLyToChuc.Aggregates.YeuCauDangKy", b =>
                 {
                     b.OwnsMany("ChainDegree.Domain.QuanLyToChuc.ValueObjects.GiayPhepCSDT", "GiayPhepCSDTs", b1 =>
@@ -760,8 +880,17 @@ namespace ChainDegree.Infrastructure.Migrations
                             b1.Property<int>("LoaiGiayPhep")
                                 .HasColumnType("int");
 
+                            b1.Property<DateTime?>("ThoiGianDuocXacMinh")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("ThoiGianTaiLen")
+                                .HasColumnType("datetime2");
+
                             b1.Property<int>("TrangThai")
                                 .HasColumnType("int");
+
+                            b1.Property<Guid?>("XacMinhBoiAdminId")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<Guid>("YeuCauDangKyId")
                                 .HasColumnType("uniqueidentifier");
@@ -783,7 +912,13 @@ namespace ChainDegree.Infrastructure.Migrations
 
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", b =>
                 {
-                    b.OwnsMany("ChainDegree.Domain.TuyenDung.ValueObjects.GiayPhepNhaTuyenDung", "_giayPheps", b1 =>
+                    b.HasOne("ChainDegree.Domain.QuanLyToChuc.Aggregates.YeuCauDangKy", null)
+                        .WithOne()
+                        .HasForeignKey("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", "YeuCauDangKyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsMany("ChainDegree.Domain.QuanLyToChuc.ValueObjects.GiayPhepNhaTuyenDung", "GiayPheps", b1 =>
                         {
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
@@ -796,7 +931,7 @@ namespace ChainDegree.Infrastructure.Migrations
                                 .HasMaxLength(1024)
                                 .HasColumnType("nvarchar(1024)");
 
-                            b1.Property<int>("KieuGiayPhep")
+                            b1.Property<int>("LoaiGiayPhep")
                                 .HasColumnType("int");
 
                             b1.Property<Guid>("NhaTuyenDungId")
@@ -807,6 +942,9 @@ namespace ChainDegree.Infrastructure.Migrations
 
                             b1.Property<DateTime>("ThoiGianTaiLen")
                                 .HasColumnType("datetime2");
+
+                            b1.Property<int>("TrangThai")
+                                .HasColumnType("int");
 
                             b1.Property<Guid?>("XacMinhBoiAdminId")
                                 .HasColumnType("uniqueidentifier");
@@ -821,11 +959,17 @@ namespace ChainDegree.Infrastructure.Migrations
                                 .HasForeignKey("NhaTuyenDungId");
                         });
 
-                    b.Navigation("_giayPheps");
+                    b.Navigation("GiayPheps");
                 });
 
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Entities.BangCapUngTuyen", b =>
                 {
+                    b.HasOne("ChainDegree.Domain.QuanLyBangCap.Entities.BangCap", null)
+                        .WithMany()
+                        .HasForeignKey("BangCapId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ChainDegree.Domain.TuyenDung.Entities.HoSoUngTuyen", null)
                         .WithMany("BangCapUngTuyens")
                         .HasForeignKey("HoSoUngTuyenId")
@@ -833,18 +977,62 @@ namespace ChainDegree.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Entities.HoSoUngTuyen", b =>
+                {
+                    b.HasOne("ChainDegree.Domain.QuanLyBangCap.Entities.SinhVien", null)
+                        .WithMany()
+                        .HasForeignKey("SinhVienId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChainDegree.Domain.TuyenDung.Entities.ThongTinTuyenDung", null)
+                        .WithMany()
+                        .HasForeignKey("ThongTinTuyenDungId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Entities.KetQuaPhanTich", b =>
+                {
+                    b.HasOne("ChainDegree.Domain.TuyenDung.Entities.HoSoUngTuyen", null)
+                        .WithMany()
+                        .HasForeignKey("HoSoUngTuyenId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChainDegree.Domain.TuyenDung.Entities.ThongTinTuyenDung", null)
+                        .WithMany()
+                        .HasForeignKey("ThongTinTuyenDungId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Entities.ThongTinTuyenDung", b =>
                 {
+                    b.HasOne("ChainDegree.Domain.DanhMuc.Entities.LinhVuc", null)
+                        .WithMany()
+                        .HasForeignKey("LinhVucId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", null)
-                        .WithMany("_thongTinTuyenDungs")
+                        .WithMany("ThongTinTuyenDungs")
                         .HasForeignKey("NhaTuyenDungId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChainDegree.Domain.XacMinhBangCap.Aggregates.NhatKyXacMinh", b =>
+                {
+                    b.HasOne("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", null)
+                        .WithMany()
+                        .HasForeignKey("NhaTuyenDungId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Aggregates.NhaTuyenDung", b =>
                 {
-                    b.Navigation("_thongTinTuyenDungs");
+                    b.Navigation("ThongTinTuyenDungs");
                 });
 
             modelBuilder.Entity("ChainDegree.Domain.TuyenDung.Entities.HoSoUngTuyen", b =>

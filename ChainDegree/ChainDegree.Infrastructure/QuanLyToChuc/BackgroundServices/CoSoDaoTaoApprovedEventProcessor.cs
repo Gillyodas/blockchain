@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using ChainDegree.Application.Common.Persistence;
-using ChainDegree.Application.Common.Services;
+using ChainDegree.Application.External.ChainDegreeBlockchainService.Services;
+using ChainDegree.Application.External.ChainDegreeFileService;
 using ChainDegree.Application.QuanLyToChuc.Interfaces.Repositories;
 using ChainDegree.Domain.QuanLyToChuc.Events;
 using Microsoft.Extensions.Configuration;
@@ -47,7 +48,7 @@ public class CoSoDaoTaoApprovedEventProcessor : BackgroundService
             try
             {
                 // Sử dụng scope để làm mới DbContext mỗi lần xử lý
-                using var scope = _serviceProvider.CreateScope();
+                await using var scope = _serviceProvider.CreateAsyncScope();
                 var unitOfWork = scope.ServiceProvider
                     .GetRequiredService<IUnitOfWork>();
                 var csdtEventRepo = scope.ServiceProvider
@@ -109,44 +110,38 @@ public class CoSoDaoTaoApprovedEventProcessor : BackgroundService
                     "Event payload không chứa địa chỉ ví");
             }
 
-            _logger.LogDebug("Danh sách CSDT: {Count} địa chỉ ví", addresses.Count);
+            _logger.LogInformation("Danh sách CSDT: {Count} địa chỉ ví", addresses.Count);
 
-            // Ghi vào toEncode.json
-            _logger.LogDebug("Ghi toEncode.json...");
-            var toEncodePath = GetToEncodePath();
-            await fileService.WriteJsonAsync(toEncodePath, addresses, cancellationToken);
-            _logger.LogInformation("✅ toEncode.json written");
-
-            // Encode sang RLP
-            _logger.LogDebug("2Encoding RLP CSDT...");
+            // Encode RLP trực tiếp từ validators list (không cần file temp)
+            _logger.LogInformation("Encoding RLP CSDT (direct)...");
             var extraData = await besuService
-                .EncodeValidatorsToExtraData(toEncodePath, cancellationToken);
-            _logger.LogInformation("RLP encoded: {Data}...", extraData[..50]);
+                .EncodeValidatorsToExtraDataAsync(addresses, cancellationToken);
+            _logger.LogInformation("RLP encoded: {Data}...", extraData[..Math.Min(50, extraData.Length)]);
 
             // Update genesis.json
-            _logger.LogDebug("Cập nhật genesis.json...");
-            await fileService.UpdateGenesisExtraData(extraData, cancellationToken);
+            _logger.LogInformation("Cập nhật genesis.json...");
+            await fileService.UpdateGenesisExtraDataAsync(extraData, cancellationToken);
             _logger.LogInformation("genesis.json updated");
 
             // Restart Besu để áp dụng thay đổi
-            _logger.LogDebug("Restart Besu container...");
-            await besuService.RestartBesuContainer(cancellationToken);
+            _logger.LogInformation("Restart Besu container...");
+            await besuService.RestartBesuContainerAsync(cancellationToken);
             _logger.LogInformation("Besu restarted");
 
             // Chờ Besu startup xong
-            _logger.LogDebug("Chờ Besu startup ({DelayMs}ms)...", BESU_STARTUP_DELAY_MS);
+            _logger.LogInformation("Chờ Besu startup ({DelayMs}ms)...", BESU_STARTUP_DELAY_MS);
             await Task.Delay(BESU_STARTUP_DELAY_MS, cancellationToken);
 
             // Verify on-chain
-            _logger.LogDebug("Xác minh CSDT trên blockchain...");
-            var verified = await besuService.VerifyValidators(addresses, cancellationToken);
+            _logger.LogInformation("Xác minh CSDT trên blockchain...");
+            var verified = await besuService.VerifyValidatorsAsync(addresses, cancellationToken);
 
             if (!verified)
             {
                 throw new InvalidOperationException(
                     "CSDT không được tìm thấy trên blockchain sau restart");
             }
-            _logger.LogInformation("CSDT verified on-chain");
+            _logger.LogInformation("✅ CSDT verified on-chain successfully");
 
             // Mark as processed
             @event.IsProcessed = true;
@@ -198,12 +193,5 @@ public class CoSoDaoTaoApprovedEventProcessor : BackgroundService
                 //TODO: Alert admin hoặc ghi log để monitor sau. Có thể thêm method khác để admin trigger manual retry
             }
         }
-    }
-
-    private string GetToEncodePath()
-    {
-        var baseDir = _configuration["BESU_CONFIG_PATH"]
-            ?? "./besu/config";
-        return Path.Combine(baseDir, "toEncode.json");
     }
 }

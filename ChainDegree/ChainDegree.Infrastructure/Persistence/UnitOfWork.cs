@@ -152,7 +152,7 @@ public class UnitOfWork : IUnitOfWork
 
     // Private helper methods *********************************************************************************************
     // ********************************************************************************************************************
-    private async Task<int> SaveChangesAsync(CancellationToken ct)
+    public async Task<int> SaveChangesAsync(CancellationToken ct)
     {
         try
         {
@@ -241,7 +241,7 @@ public class UnitOfWork : IUnitOfWork
 
         foreach (var domainEvent in domainEvents)
         {
-            _logger.LogDebug(
+            _logger.LogInformation(
                 "{@LogCode} | Message: {@LogMessage} | EventType: {EventType}",
                 PersistenceLogs.Persistence_DangPhatDomainEvent,
                 PersistenceLogs.Persistence_DangPhatDomainEvent.Message,

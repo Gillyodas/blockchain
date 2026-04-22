@@ -19,7 +19,7 @@ public class DangKyToChucCommandValidator : AbstractValidator<DangKyToChucComman
             .MaximumLength(255).WithMessage("Tên tổ chức không được vượt quá 255 ký tự.");
 
         RuleFor(x => x.TkId)
-            .NotEmpty().WithMessage("Tài khoản id không được để trống.");
+            .NotEmpty().WithMessage("TkId không được để trống.");
 
         RuleFor(x => x.LoaiToChucDangKy)
             .IsInEnum().WithMessage("Loại tổ chức đăng ký không hợp lệ.");

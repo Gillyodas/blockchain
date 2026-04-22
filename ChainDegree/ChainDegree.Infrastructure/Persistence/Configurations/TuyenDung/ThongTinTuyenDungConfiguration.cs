@@ -33,12 +33,6 @@ public class ThongTinTuyenDungConfiguration : IEntityTypeConfiguration<ThongTinT
         builder.Property(t => t.ThoiGianCapNhat);
         builder.Property(t => t.ThoiGianXoa); // soft delete
 
-        builder.HasOne<NhaTuyenDung>()
-            .WithMany()
-            .HasForeignKey(t => t.NhaTuyenDungId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne<LinhVuc>()
             .WithMany()
             .HasForeignKey(t => t.LinhVucId)

@@ -18,4 +18,5 @@ public static class QuanLyToChucError
 
     public static readonly Error KhongTimThayYeuCauDangKy = Error.NotFound("QuanLyToChuc.KhongTimThayYeuCauDangKy", "Không tìm thấy yêu cầu đăng ký tổ chức");
     public static readonly Error DiaChiViDaDuocSuDung = Error.Conflict("QuanLyToChuc.DiaChiViDaDuocSuDung", "Địa chỉ ví đã được sử dụng cho một yêu cầu đăng ký làm tổ chức khác");
+    public static readonly Error KhongLayDuocDanhSachCacCSDTDaDuyet = Error.NotFound("QuanLyToChuc.KhongLayDuocDanhSachCacCSDTDaDuyet", "Không lấy được danh sách các cơ sở đào tạo đã được duyệt");
 }

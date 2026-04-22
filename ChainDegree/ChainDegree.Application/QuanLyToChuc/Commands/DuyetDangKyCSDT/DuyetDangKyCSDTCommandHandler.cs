@@ -18,17 +18,20 @@ public class DuyetDangKyCSDTCommandHandler : IRequestHandler<DuyetDangKyCSDTComm
     private readonly ILogger<DuyetDangKyCSDTCommandHandler> _logger;
     private readonly IYeuCauDangKyRepository _yeuCauDangKyRepository;
     private readonly ICoSoDaoTaoRepository _coSoDaoTaoRepository;
+    private readonly ICoSoDaoTaoApprovedEventRepository _coSoDaoTaoApprovedEventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DuyetDangKyCSDTCommandHandler(
         ILogger<DuyetDangKyCSDTCommandHandler> logger,
         IYeuCauDangKyRepository yeuCauDangKyRepository,
         ICoSoDaoTaoRepository coSoDaoTaoRepository,
+        ICoSoDaoTaoApprovedEventRepository coSoDaoTaoApprovedEventRepository,
         IUnitOfWork unitOfWork)
     {
         _logger = logger;
         _yeuCauDangKyRepository = yeuCauDangKyRepository;
         _coSoDaoTaoRepository = coSoDaoTaoRepository;
+        _coSoDaoTaoApprovedEventRepository = coSoDaoTaoApprovedEventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -39,7 +42,7 @@ public class DuyetDangKyCSDTCommandHandler : IRequestHandler<DuyetDangKyCSDTComm
         {
             _logger.LogInformation("Bắt đầu duyệt đăng ký CSDT ID: {Id}", request.YeuCauDangKyId);
 
-            _logger.LogDebug("Lấy thông tin yêu cầu đăng ký CSDT từ repository");
+            _logger.LogInformation("Lấy thông tin yêu cầu đăng ký CSDT từ repository");
             var yeuCauDangKy = await _yeuCauDangKyRepository.GetByIdAsync(request.YeuCauDangKyId, cancellationToken);
             if (yeuCauDangKy == null || yeuCauDangKy.Loai != LoaiToChuc.Issuer)
             {
@@ -47,15 +50,17 @@ public class DuyetDangKyCSDTCommandHandler : IRequestHandler<DuyetDangKyCSDTComm
                 return Result.Failure(QuanLyToChucError.KhongTimThayYeuCauDangKy);
             }
 
-            _logger.LogDebug("Thực hiện duyệt yêu cầu đăng ký CSDT");
+            _logger.LogInformation("Thực hiện duyệt yêu cầu đăng ký CSDT");
             var approveResult = yeuCauDangKy.AdminDuyet(request.GhiChu);
             if (approveResult.IsFailure) return Result.Failure(approveResult.Error);
 
-            _logger.LogDebug("Tạo cơ sở đào tạo mới từ yêu cầu đăng ký");
+            _logger.LogInformation("Tạo cơ sở đào tạo mới từ yêu cầu đăng ký");
             var csdtResult = CoSoDaoTao.Create(
                 yeuCauDangKy.TenToChuc,
                 yeuCauDangKy.DiaChiVi,
-                yeuCauDangKy.GiayPhepCSDTs.ToList());
+                yeuCauDangKy.GiayPhepCSDTs.ToList(),
+                yeuCauDangKy.TaiKhoanId,
+                yeuCauDangKy.Id);
 
             if (csdtResult.IsFailure)
             {
@@ -63,19 +68,30 @@ public class DuyetDangKyCSDTCommandHandler : IRequestHandler<DuyetDangKyCSDTComm
                 return Result.Failure(csdtResult.Error);
             }
 
-            _logger.LogDebug("Lưu cơ sở đào tạo mới vào repository");
+            _logger.LogInformation("Lưu cơ sở đào tạo mới vào repository");
             await _coSoDaoTaoRepository.AddAsync(csdtResult.Value, cancellationToken);
 
-            _logger.LogDebug("Lấy danh sách tất cả CSDT đã được duyệt");
-            var csdtDaDuyet = await _coSoDaoTaoRepository.GetAllAsync(cancellationToken);
+            _logger.LogInformation("Lưu cơ sở đào tạo mới vào database");
+            var rowsAffected = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (rowsAffected > 0)
+            {
+                _logger.LogDebug("SaveChanges hoàn thành cho cơ sở đào tạo mới. Số dòng bị ảnh hưởng: {RowsAffected}", rowsAffected);
+            }
+            else
+            {
+                _logger.LogWarning("SaveChanges hoàn thành cho cơ sở đào tạo mới nhưng không có dòng nào bị ảnh hưởng.");
+            }
 
-            _logger.LogDebug("Danh sách địa chỉ ví của các CSDT đã được duyệt");
-            var danhSachDiaChiViDaDuyet = csdtDaDuyet
-                .Select(c => c.DiaChiViCSDT)
-                .OrderBy(a => a)
-                .ToList();
+            _logger.LogInformation("Lấy danh sách địa chỉ ví của các CSDT đã được duyệt");
+            var danhSachDiaChiViDaDuyet = await _coSoDaoTaoRepository.GetAllAddressWalletAsync(cancellationToken);
 
-            _logger.LogDebug(
+            if(danhSachDiaChiViDaDuyet == null)
+            {
+                _logger.LogWarning("Không lấy được danh sách địa chỉ ví của các CSDT đã được duyệt");
+                return Result.Failure(QuanLyToChucError.KhongLayDuocDanhSachCacCSDTDaDuyet);
+            }
+
+            _logger.LogInformation(
                 "Tạo CoSoDaoTaoApprovedEvent để ghi vào Outbox. Số cơ sở đào tạo: {Count}",
                 danhSachDiaChiViDaDuyet.Count);
             var csdtEvent = CoSoDaoTaoApprovedEvent.Create(
@@ -84,7 +100,21 @@ public class DuyetDangKyCSDTCommandHandler : IRequestHandler<DuyetDangKyCSDTComm
                 tenToChuc: yeuCauDangKy.TenToChuc,
                 danhSachDiaChiViDaDuyet: danhSachDiaChiViDaDuyet);
 
-            _logger.LogDebug("Cập nhật trạng thái yêu cầu đăng ký CSDT đã được duyệt");
+            _logger.LogInformation("Lưu event vào Outbox");
+            _coSoDaoTaoApprovedEventRepository.Add(csdtEvent);
+
+            _logger.LogInformation("Lưu event cơ sở đào tạo mới vào database");
+            var rowsAffectedEvent = await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (rowsAffectedEvent > 0)
+            {
+                _logger.LogDebug("SaveChanges hoàn thành cho event cơ sở đào tạo mới. Số dòng bị ảnh hưởng: {RowsAffected}", rowsAffectedEvent);
+            }
+            else
+            {
+                _logger.LogWarning("SaveChanges hoàn thành cho event cơ sở đào tạo mới nhưng không có dòng nào bị ảnh hưởng.");
+            }
+
+            _logger.LogInformation("Cập nhật trạng thái yêu cầu đăng ký CSDT đã được duyệt");
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
             _logger.LogInformation("Duyệt đăng ký CSDT thành công cho yêu cầu ID: {Id}", request.YeuCauDangKyId);

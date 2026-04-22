@@ -1,12 +1,14 @@
 
 using System.Reflection;
+using System.Text;
+using ChainDegree.Application;
 using ChainDegree.Infrastructure;
+using ChainDegree.Infrastructure.Persistence;
 using ControlHub;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Formatting.Compact;
-using ChainDegree.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChainDegree.API
 {
@@ -14,6 +16,8 @@ namespace ChainDegree.API
     {
         public static async Task Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Application", "ChainDegree.API")
@@ -58,6 +62,7 @@ namespace ChainDegree.API
                 throw;
             }
 
+            builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();

@@ -51,7 +51,7 @@ public class YeuCauDangKy : AggregateRoot
             tenToChuc,
             loai,
             taiKhoanId,
-            TrangThaiYeuCauDangKy.Nhap,
+            TrangThaiYeuCauDangKy.DaGui,
             diaChiVi);
         return Result<YeuCauDangKy>.Success(request);
     }

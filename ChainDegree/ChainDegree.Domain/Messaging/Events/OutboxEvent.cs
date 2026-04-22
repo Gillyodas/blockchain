@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ChainDegree.Domain.Common.Events;
+namespace ChainDegree.Domain.Messaging.Events;
 
 public abstract class OutboxEvent
 {

@@ -26,9 +26,9 @@ public class DangKyToChucCommandHandler : IRequestHandler<DangKyToChucCommand, R
     {
         try
         {
-            _logger.LogInformation("Bắt đầu xử lý đăng ký làm tổ chức tạo với tên tổ chức: {TenToChuc}", request.TenToChuc);
+            _logger.LogInformation("Bắt đầu xử lý đăng ký làm tổ chức với tên tổ chức: {TenToChuc}", request.TenToChuc);
 
-            _logger.LogDebug("Kiểm tra địa chỉ ví đã được sử dụng cho yêu cầu đăng ký làm tổ chức với tên tổ chức {TenToChuc} và địa chỉ ví {DiaChiVi}", request.TenToChuc, request.DiaChiVi);
+            _logger.LogInformation("Kiểm tra địa chỉ ví đã được sử dụng cho yêu cầu đăng ký làm tổ chức với tên tổ chức {TenToChuc} và địa chỉ ví {DiaChiVi}", request.TenToChuc, request.DiaChiVi);
             bool diaChiViDaDuocSuDung = await _yeuCauDangKyRepository.ExistsByDiaChiViAsync(request.DiaChiVi, cancellationToken);
             if(diaChiViDaDuocSuDung)
             {

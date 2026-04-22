@@ -12,7 +12,8 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
         public Guid Id { get; private set; }
         public string Ten { get; private set; } = null!;
         public string DiaChiViCSDT { get; private set; } = null!;
-        public Guid? TKId { get; private set; }
+        public Guid TKId { get; private set; }
+        public Guid YeuCauDangKyId { get; private set; }
         public DateTime ThoiGianTao { get; private set; } = DateTime.UtcNow;
         public DateTime? ThoiGianCapNhat { get; private set; }
         public DateTime? ThoiGianXoa { get; private set; }
@@ -23,30 +24,32 @@ namespace ChainDegree.Domain.QuanLyBangCap.Aggregates
 
         private CoSoDaoTao() { }
 
-        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin)
+        private CoSoDaoTao(Guid id, string ten, string diaChiViCSDT, List<GiayPhepCSDT> danhSachGiayPhepCSDT, UyTinToChuc uyTin, Guid tkId, Guid yeuCauDangKyId)
         {
             Id = id;
             Ten = ten;
             DiaChiViCSDT = diaChiViCSDT;
             _danhSachGiayPhepCSDT = new List<GiayPhepCSDT>(danhSachGiayPhepCSDT); ;
             UyTin = uyTin;
+            TKId = tkId;
+            YeuCauDangKyId = yeuCauDangKyId;
         }
 
         public static Result<CoSoDaoTao> Create(string ten, string diaChiViCSDT,
-            List<GiayPhepCSDT> danhSachGiayPhepCSDT)
+            List<GiayPhepCSDT> danhSachGiayPhepCSDT, Guid tkId, Guid yeuCauDangKyId)
         {
             // Ít nhất phải có 2 giấy phép: Giấy phép hoạt động giáo dục và Quyết định thành lập trường
-            if (danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count < 2)
-                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
+            //if (danhSachGiayPhepCSDT == null || danhSachGiayPhepCSDT.Count < 2)
+            //    return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuThongTinGiayPhepCSDT);
 
-            if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.GiayPhepHoatDongGiaoDuc))
-                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuGiayPhepHoatDongGiaoDuc);
-            if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.QuyetDinhThanhLapTruong))
-                return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuQuyetDinhThanhLapTruong);
+            //if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.GiayPhepHoatDongGiaoDuc))
+            //    return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuGiayPhepHoatDongGiaoDuc);
+            //if (!danhSachGiayPhepCSDT.Any(gp => gp.LoaiGiayPhep == LoaiGiayPhepCSDT.QuyetDinhThanhLapTruong))
+            //    return Result<CoSoDaoTao>.Failure(CoSoDaoTaoError.ThieuQuyetDinhThanhLapTruong);
 
             UyTinToChuc uyTinKhoiTao = UyTinToChuc.KhoiTao(danhSachGiayPhepCSDT.Count());
 
-            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, danhSachGiayPhepCSDT, uyTinKhoiTao);
+            CoSoDaoTao csdt = new CoSoDaoTao(Guid.NewGuid(), ten, diaChiViCSDT, danhSachGiayPhepCSDT, uyTinKhoiTao, tkId, yeuCauDangKyId);
 
             return Result<CoSoDaoTao>.Success(csdt);
         }

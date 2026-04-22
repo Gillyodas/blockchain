@@ -39,7 +39,7 @@ public class DuyetDangKyNTDCommandHandler : IRequestHandler<DuyetDangKyNTDComman
         {
             _logger.LogInformation("Bắt đầu duyệt đăng ký NTD ID: {Id}", request.YeuCauDangKyId);
 
-            _logger.LogDebug("Lấy yêu cầu đăng ký từ repository với ID: {Id}", request.YeuCauDangKyId);
+            _logger.LogInformation("Lấy yêu cầu đăng ký từ repository với ID: {Id}", request.YeuCauDangKyId);
             var yeuCauDangKy = await _yeuCauDangKyRepository.GetByIdAsync(request.YeuCauDangKyId, cancellationToken);
             if (yeuCauDangKy == null || yeuCauDangKy.Loai != LoaiToChuc.Verifier)
             {
@@ -47,7 +47,7 @@ public class DuyetDangKyNTDCommandHandler : IRequestHandler<DuyetDangKyNTDComman
                 return Result.Failure(QuanLyToChucError.KhongTimThayYeuCauDangKy);
             }
 
-            _logger.LogDebug("Duyệt yêu cầu đăng ký NTD ID: {Id} với ghi chú: {GhiChu}", request.YeuCauDangKyId, request.GhiChu);
+            _logger.LogInformation("Duyệt yêu cầu đăng ký NTD ID: {Id} với ghi chú: {GhiChu}", request.YeuCauDangKyId, request.GhiChu);
             var approveResult = yeuCauDangKy.AdminDuyet(request.GhiChu);
             if (approveResult.IsFailure)
             {
@@ -55,7 +55,7 @@ public class DuyetDangKyNTDCommandHandler : IRequestHandler<DuyetDangKyNTDComman
                 return Result.Failure(approveResult.Error);
             }
 
-            _logger.LogDebug("Cập nhật trạng thái yêu cầu đăng ký NTD ID: {Id} trong repository", request.YeuCauDangKyId);
+            _logger.LogInformation("Cập nhật trạng thái yêu cầu đăng ký NTD ID: {Id} trong repository", request.YeuCauDangKyId);
             var ntdResult = NhaTuyenDung.Create(
                 yeuCauDangKy.TenToChuc,
                 yeuCauDangKy.DiaChiVi,
@@ -69,10 +69,10 @@ public class DuyetDangKyNTDCommandHandler : IRequestHandler<DuyetDangKyNTDComman
                 return Result.Failure(ntdResult.Error);
             }
             
-            _logger.LogDebug("Lưu NTD mới vào repository");
+            _logger.LogInformation("Lưu NTD mới vào repository");
             await _nhaTuyenDungRepository.AddAsync(ntdResult.Value, cancellationToken);
 
-            _logger.LogDebug("Lưu thay đổi vào database");
+            _logger.LogInformation("Lưu thay đổi vào database");
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return Result.Success();

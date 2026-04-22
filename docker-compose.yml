@@ -1,45 +1,54 @@
+version: '3.8'
+
 services:
-    besu-node:
-      image: hyperledger/besu:latest
-      container_name: chaindegree-besu
-      ports:
-        - "8545:8545"   # HTTP JSON-RPC (app .NET gọi vào đây)
-        - "8546:8546"   # WebSocket
-      volumes:
-        - ./besu/config/genesis.json:/config/genesis.json
-        - besu-data:/opt/besu/data
-      command:
-        - --genesis-file=/config/genesis.json
-        - --rpc-http-enabled
-        - --rpc-http-api=ETH,NET,IBFT,WEB3,ADMIN,TXPOOL
-        - --rpc-http-host=0.0.0.0
-        - --rpc-http-cors-origins=*
-        - --rpc-ws-enabled
-        - --rpc-ws-host=0.0.0.0
-        - --host-allowlist=*
-        - --min-gas-price=0
-
-    qdrant:
-      image: qdrant/qdrant:latest
-      container_name: chaindegree-qdrant
-      ports:
-        - "6333:6333" # Access REST API
-        - "6334:6334" # Access gRPC
-      volumes:
-        - ./qdrant_storage:/qdrant/storage
-      restart: unless-stopped
-      environment:
-        - QDRANT__SERVICE__GRPC_PORT=6334
-
-    ollama:
-      image: ollama/ollama:latest
-      container_name: chaindegree-ollama
-      ports:
-        - "11434:11434"
-      volumes:
-        - ollama_models:/root/.ollama
-
+  besu-node:
+    image: hyperledger/besu:latest
+    container_name: chaindegree-besu
+    
+    ports:
+      - "8545:8545"   # HTTP JSON-RPC (app .NET gọi vào đây)
+      - "8546:8546"   # WebSocket (optional)
+    
+    volumes:
+      # Genesis config - READ ONLY (:ro)
+      # Tại sao :ro: Besu không nên modify genesis file
+      - ./besu/config/genesis.json:/config/genesis.json:ro
+      
+      # Data directory - READ WRITE
+      # Nơi Besu lưu blockchain state
+      - besu-data:/opt/besu/data
+    
+    command:
+      # Genesis file
+      - --genesis-file=/config/genesis.json
+      
+      # JSON-RPC HTTP API (app .NET gọi vào)
+      - --rpc-http-enabled
+      - --rpc-http-api=ETH,NET,IBFT,WEB3,ADMIN,TXPOOL
+      - --rpc-http-host=0.0.0.0
+      - --rpc-http-port=8545
+      - --rpc-http-cors-origins=*
+      
+      # JSON-RPC WebSocket (optional)
+      - --rpc-ws-enabled
+      - --rpc-ws-host=0.0.0.0
+      - --rpc-ws-port=8546
+      
+      # Network
+      - --host-allowlist=*
+      - --min-gas-price=0
+      
+      # Data path (IMPORTANT)
+      # Tại sao: Besu cần biết nơi lưu blockchain data
+      - --data-path=/opt/besu/data
+      
+      # Logging (optional - helps debug)
+      - --logging=INFO
 
 volumes:
   besu-data:
-  ollama_models:
+    driver: local
+
+# networks (optional):
+#   blockchain:
+#     driver: bridge
